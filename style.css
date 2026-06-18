@@ -1,0 +1,207 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0A0A0B;
+  --surface: #1C1C1E;
+  --text-primary: #F1EFE8;
+  --text-secondary: #5F5E5A;
+  --particle: #888780;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+#starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Vinheta: aprofunda as bordas, foca o centro */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 130% 110% at 50% 45%,
+    transparent 45%,
+    rgba(10, 10, 11, 0.5) 100%
+  );
+}
+
+.space {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+}
+
+/* ── Products ── */
+.product {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+}
+
+.planet-body {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.planet-core {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 35%,
+    color-mix(in srgb, var(--color) 60%, #fff 40%) 0%,
+    var(--color) 35%,
+    color-mix(in srgb, var(--color) 40%, #0A0A0B 60%) 70%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 20px 4px var(--glow),
+    0 0 60px 8px color-mix(in srgb, var(--glow) 40%, transparent);
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.planet-ring {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--color) 20%, transparent);
+  animation: breathe 4s ease-in-out infinite reverse;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+.product-name {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color);
+  opacity: 0.7;
+  transition: opacity 0.3s ease, letter-spacing 0.3s ease;
+  white-space: nowrap;
+}
+
+/* ── Hover states ── */
+.product:hover .planet-body {
+  transform: scale(1.12);
+}
+
+.product:hover .planet-core {
+  box-shadow:
+    0 0 30px 8px var(--glow),
+    0 0 90px 16px color-mix(in srgb, var(--glow) 55%, transparent),
+    0 0 5px 1px color-mix(in srgb, var(--color) 80%, #fff);
+  animation-play-state: paused;
+}
+
+.product:hover .planet-ring {
+  border-color: color-mix(in srgb, var(--color) 50%, transparent);
+  animation-play-state: paused;
+}
+
+.product:hover .product-name {
+  opacity: 1;
+  letter-spacing: 0.16em;
+}
+
+/* ── Stagger breathe animations per planet ── */
+.aurelia .planet-core { animation-delay: 0s; }
+.latamtax .planet-core { animation-delay: 1.3s; }
+.hc360 .planet-core { animation-delay: 2.6s; }
+
+/* ── Holding name ── */
+.holding-name {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: lowercase;
+  color: var(--text-primary);
+  opacity: 0.2;
+  user-select: none;
+  white-space: nowrap;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  html, body {
+    overflow: auto;
+    height: auto;
+  }
+
+  #starfield {
+    height: 100%;
+    min-height: 100vh;
+  }
+
+  .space {
+    height: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 32px 120px;
+    gap: 72px;
+  }
+
+  .product {
+    position: static;
+    transform: none;
+    left: auto;
+    top: auto;
+  }
+
+  .planet-body {
+    width: 80px;
+    height: 80px;
+  }
+
+  .holding-name {
+    position: absolute;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .planet-core,
+  .planet-ring {
+    animation: none;
+  }
+}
