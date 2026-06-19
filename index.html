@@ -1,45 +1,372 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Caspra Labs</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #04040c; font-family: 'Space Grotesk', sans-serif; }
+
+    /* ── MAIN CANVAS (stars + nebula) ── */
+    #cvs { position: fixed; inset: 0; z-index: 0; }
+
+    /* ── WORDMARK ── */
+    .wordmark {
+      position: fixed; top: 2rem; left: 50%; transform: translateX(-50%);
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.4em; text-transform: uppercase;
+      color: rgba(200,216,255,0.22); white-space: nowrap; z-index: 10;
+    }
+
+    /* ── HINT ── */
+    .hint {
+      position: fixed; bottom: 3.2rem; left: 50%; transform: translateX(-50%);
+      font-size: 0.68rem; color: rgba(200,220,255,0.38);
+      letter-spacing: 0.1em; white-space: nowrap; z-index: 10;
+      transition: opacity 0.6s ease;
+      animation: breathe 3.5s ease-in-out infinite;
+    }
+    .hint.hidden { opacity: 0; pointer-events: none; }
+    @keyframes breathe { 0%,100%{opacity:0.38} 50%{opacity:0.65} }
+
+    /* ── NEBULA BUTTON (center) ── */
+    #nebula-btn {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 5; cursor: pointer;
+      width: 220px; height: 220px;
+      border-radius: 50%;
+      background: transparent; border: none; outline: none;
+      transition: transform 0.5s cubic-bezier(.22,1,.36,1);
+    }
+    #nebula-btn:hover { transform: translate(-50%, -50%) scale(1.05); }
+    #nebula-btn canvas {
+      width: 100%; height: 100%;
+      border-radius: 50%; display: block;
+    }
+    .nebula-label {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.82rem; letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(230,225,255,0.82);
+      pointer-events: none;
+      transition: opacity 0.4s ease, letter-spacing 0.4s ease;
+    }
+    #nebula-btn:hover .nebula-label { letter-spacing: 0.28em; opacity: 1; }
+
+    /* ── PRODUCT STARS ── */
+    .product-star {
+      position: fixed;
+      z-index: 8;
+      display: flex; flex-direction: column; align-items: center;
+      text-decoration: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.22,1,.36,1);
+    }
+    .product-star.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .product-star:hover .star-dot { filter: brightness(2) saturate(1.5); transform: scale(1.5); }
+    .product-star:hover .star-name { opacity: 1; }
+
+    .star-dot {
+      border-radius: 50%;
+      transition: transform 0.35s ease, filter 0.35s ease;
+    }
+    .star-glow-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid;
+      animation: pulse-ring 2.5s ease-out infinite;
+      pointer-events: none;
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(2.8); opacity: 0; }
+    }
+
+    .star-name {
+      margin-top: 14px; text-align: center;
+      opacity: 0.75; transition: opacity 0.3s ease;
+    }
+    .s-name {
+      font-family: 'Space Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(220,232,255,0.92); display: block; white-space: nowrap;
+    }
+    .s-sub {
+      font-size: 0.58rem; color: rgba(180,200,255,0.42);
+      margin-top: 3px; display: block; white-space: nowrap;
+    }
+
+    /* colors per product */
+    .ps-latamtax .star-dot {
+      width: 14px; height: 14px; background: #7eb8f7;
+      box-shadow: 0 0 16px 6px rgba(126,184,247,0.6), 0 0 50px 14px rgba(126,184,247,0.18);
+    }
+    .ps-latamtax .star-glow-ring { width: 14px; height: 14px; border-color: rgba(126,184,247,0.7); }
+
+    .ps-hotel .star-dot {
+      width: 16px; height: 16px; background: #a78bfa;
+      box-shadow: 0 0 18px 7px rgba(167,139,250,0.6), 0 0 55px 16px rgba(167,139,250,0.18);
+    }
+    .ps-hotel .star-glow-ring { width: 16px; height: 16px; border-color: rgba(167,139,250,0.7); }
+
+    .ps-aurelia .star-dot {
+      width: 13px; height: 13px; background: #5eead4;
+      box-shadow: 0 0 15px 5px rgba(94,234,212,0.6), 0 0 46px 12px rgba(94,234,212,0.18);
+    }
+    .ps-aurelia .star-glow-ring { width: 13px; height: 13px; border-color: rgba(94,234,212,0.7); }
+  </style>
 </head>
 <body>
-  <canvas id="starfield"></canvas>
 
-  <main class="space">
-    <div class="product aurelia" data-href="#aurelia" style="--x: 58%; --y: 22%; --color: #5DCAA5; --glow: rgba(93,202,165,0.35);">
-      <div class="planet-body">
-        <div class="planet-core"></div>
-        <div class="planet-ring"></div>
-      </div>
-      <span class="product-name">Aurelia</span>
-    </div>
+<!-- background: ambient stars -->
+<canvas id="cvs"></canvas>
 
-    <div class="product latamtax" data-href="#latamtax" style="--x: 22%; --y: 55%; --color: #C8894A; --glow: rgba(200,137,74,0.35);">
-      <div class="planet-body">
-        <div class="planet-core"></div>
-        <div class="planet-ring"></div>
-      </div>
-      <span class="product-name">LatamTax</span>
-    </div>
+<span class="wordmark">Caspra Labs</span>
 
-    <div class="product hc360" data-href="https://gabrielpreview.github.io/caspra/h360" style="--x: 72%; --y: 65%; --color: #7BAFD4; --glow: rgba(123,175,212,0.35);">
-      <div class="planet-body">
-        <div class="planet-core"></div>
-        <div class="planet-ring"></div>
-      </div>
-      <span class="product-name">HC360</span>
-    </div>
+<!-- Center nebula button -->
+<button id="nebula-btn" onclick="expandProducts()">
+  <canvas id="nebula-cvs" width="440" height="440"></canvas>
+  <span class="nebula-label">Caspra</span>
+</button>
 
-    <div class="holding-name">caspra labs</div>
-  </main>
+<!-- Product stars (hidden initially) -->
+<a class="product-star ps-latamtax" id="ps-1" href="https://latamtax.bringitps.com" target="_blank">
+  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+    <div class="star-glow-ring" style="animation-delay:0s"></div>
+    <div class="star-dot"></div>
+  </div>
+  <div class="star-name">
+    <span class="s-name">LatamTax</span>
+    <span class="s-sub">Tax Compliance</span>
+  </div>
+</a>
 
-  <script src="script.js"></script>
+<a class="product-star ps-hotel" id="ps-2" href="https://hotel360.bringitps.com" target="_blank">
+  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+    <div class="star-glow-ring" style="animation-delay:0.8s"></div>
+    <div class="star-dot"></div>
+  </div>
+  <div class="star-name">
+    <span class="s-name">Hotel 360°</span>
+    <span class="s-sub">Hospitality Finance</span>
+  </div>
+</a>
+
+<a class="product-star ps-aurelia" id="ps-3" href="https://gabrielpreview.github.io/caspra/h360" target="_blank">
+  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
+    <div class="star-glow-ring" style="animation-delay:1.6s"></div>
+    <div class="star-dot"></div>
+  </div>
+  <div class="star-name">
+    <span class="s-name">Aurélia</span>
+    <span class="s-sub">NetSuite for Hotels</span>
+  </div>
+</a>
+
+<p class="hint" id="hint">Click the nebula to explore</p>
+
+<script>
+// ════════════════════════════════════════
+// 1. AMBIENT STAR FIELD (background)
+// ════════════════════════════════════════
+(function(){
+  const c = document.getElementById('cvs'), ctx = c.getContext('2d');
+  let W, H, stars = [];
+
+  function resize(){
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+    stars = Array.from({length: 380}, () => ({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*0.9+0.1,
+      base: Math.random()*0.28+0.04,
+      spd: Math.random()*0.4+0.1,
+      ph: Math.random()*Math.PI*2,
+      // drift very slowly
+      vx: (Math.random()-.5)*0.04,
+      vy: (Math.random()-.5)*0.04,
+    }));
+  }
+
+  function drawNebulaBg(){
+    ctx.fillStyle = '#04040c';
+    ctx.fillRect(0,0,W,H);
+    // soft nebula clouds in background — very dim
+    const blobs = [
+      {x:.18,y:.28,r:.5,c:'rgba(22,6,55,0.5)'},
+      {x:.78,y:.7, r:.38,c:'rgba(6,18,58,0.4)'},
+      {x:.5, y:.5, r:.28,c:'rgba(45,10,70,0.28)'},
+    ];
+    blobs.forEach(b=>{
+      const rx=b.x*W,ry=b.y*H,rr=b.r*Math.max(W,H);
+      const g=ctx.createRadialGradient(rx,ry,0,rx,ry,rr);
+      g.addColorStop(0,b.c); g.addColorStop(1,'rgba(4,4,12,0)');
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(rx,ry,rr,0,Math.PI*2); ctx.fill();
+    });
+  }
+
+  let t=0;
+  function loop(){
+    drawNebulaBg();
+    t += 0.008;
+    stars.forEach(s=>{
+      s.x += s.vx; s.y += s.vy;
+      if(s.x<0) s.x=W; if(s.x>W) s.x=0;
+      if(s.y<0) s.y=H; if(s.y>H) s.y=0;
+      const a = s.base * (0.5 + 0.5*Math.sin(t*s.spd+s.ph));
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(190,210,255,${a})`; ctx.fill();
+    });
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', resize);
+  resize(); loop();
+})();
+
+// ════════════════════════════════════════
+// 2. NEBULA CANVAS (center button)
+// ════════════════════════════════════════
+(function(){
+  const c = document.getElementById('nebula-cvs'), ctx = c.getContext('2d');
+  const S = 440, CX = S/2, CY = S/2;
+
+  // particles: two layers
+  // Layer A — nebula cloud wisps (slow, large, transparent)
+  const wisps = Array.from({length:180}, ()=>({
+    ang: Math.random()*Math.PI*2,
+    r: Math.random()*90+10,
+    sz: Math.random()*22+8,
+    br: Math.random()*0.07+0.02,
+    hue: 230+Math.random()*80,
+    spd: (Math.random()-.5)*0.0003,
+    ph: Math.random()*Math.PI*2,
+  }));
+
+  // Layer B — star core particles (galaxy spiral)
+  const sparks = [];
+  for(let a=0;a<3;a++){
+    const off=(a/3)*Math.PI*2;
+    for(let i=0;i<160;i++){
+      const tt=i/160, ang=off+tt*Math.PI*3.8, rad=tt*82+8+(Math.random()-.5)*14;
+      sparks.push({
+        ba:ang, r:rad,
+        ox:(Math.random()-.5)*7, oy:(Math.random()-.5)*7,
+        sz:Math.random()*1.6+0.3,
+        br:Math.random()*0.45+0.15,
+        hue:210+Math.random()*80-a*30,
+        spd:0.00018+Math.random()*0.00012
+      });
+    }
+  }
+  // bright core
+  for(let i=0;i<60;i++) sparks.push({
+    ba:Math.random()*Math.PI*2, r:Math.random()*18,
+    ox:0,oy:0, sz:Math.random()*2.5+0.5,
+    br:Math.random()*0.75+0.4,
+    hue:225+Math.random()*40,
+    spd:0.0007+Math.random()*0.0004
+  });
+
+  let fr=0, t=0;
+  function draw(){
+    ctx.clearRect(0,0,S,S);
+
+    // outer glow halo
+    const halo = ctx.createRadialGradient(CX,CY,20,CX,CY,S/2);
+    halo.addColorStop(0,'rgba(90,50,180,0.18)');
+    halo.addColorStop(0.35,'rgba(40,20,100,0.1)');
+    halo.addColorStop(1,'rgba(4,4,12,0)');
+    ctx.fillStyle=halo; ctx.fillRect(0,0,S,S);
+
+    // nebula wisps
+    t += 0.004;
+    wisps.forEach(w=>{
+      const ang = w.ang + t*w.spd*10;
+      const px = CX + Math.cos(ang)*w.r, py = CY + Math.sin(ang)*w.r;
+      const pulse = w.br*(0.6+0.4*Math.sin(t*0.8+w.ph));
+      const g = ctx.createRadialGradient(px,py,0,px,py,w.sz);
+      g.addColorStop(0,`hsla(${w.hue},70%,75%,${pulse})`);
+      g.addColorStop(1,`hsla(${w.hue},70%,75%,0)`);
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,w.sz,0,Math.PI*2); ctx.fill();
+    });
+
+    // galaxy spiral sparks
+    sparks.forEach(p=>{
+      const ang=p.ba+fr*p.spd;
+      const px=CX+Math.cos(ang)*p.r+p.ox, py=CY+Math.sin(ang)*p.r+p.oy;
+      ctx.beginPath(); ctx.arc(px,py,p.sz,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${p.hue},78%,84%,${p.br})`; ctx.fill();
+    });
+
+    // inner bright core
+    const core=ctx.createRadialGradient(CX,CY,0,CX,CY,30);
+    core.addColorStop(0,'rgba(200,180,255,0.35)');
+    core.addColorStop(0.5,'rgba(120,90,220,0.12)');
+    core.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=core; ctx.fillRect(0,0,S,S);
+
+    fr++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ════════════════════════════════════════
+// 3. PRODUCT STARS — EXPAND ON CLICK
+// ════════════════════════════════════════
+let expanded = false;
+
+function expandProducts(){
+  if(expanded) return;
+  expanded = true;
+
+  const hint = document.getElementById('hint');
+  hint.classList.add('hidden');
+
+  // shrink nebula button slightly
+  const btn = document.getElementById('nebula-btn');
+  btn.style.transform = 'translate(-50%,-50%) scale(0.82)';
+  btn.style.cursor = 'default';
+  btn.onclick = null;
+
+  const W = window.innerWidth, H = window.innerHeight;
+  const cx = W/2, cy = H/2;
+
+  // positions: top-left, top-right, bottom-center
+  const positions = [
+    { x: cx - W*0.28, y: cy - H*0.22 },
+    { x: cx + W*0.28, y: cy - H*0.22 },
+    { x: cx,          y: cy + H*0.28  },
+  ];
+
+  const stars = ['ps-1','ps-2','ps-3'];
+  stars.forEach((id, i) => {
+    const el = document.getElementById(id);
+    // start at center
+    el.style.left  = cx + 'px';
+    el.style.top   = cy + 'px';
+    el.style.transform = 'translate(-50%,-50%) scale(0.2)';
+    el.style.transition = 'none';
+
+    setTimeout(()=>{
+      el.style.transition = `opacity 0.8s ease ${i*0.18}s, left 0.9s cubic-bezier(.22,1,.36,1) ${i*0.18}s, top 0.9s cubic-bezier(.22,1,.36,1) ${i*0.18}s, transform 0.9s cubic-bezier(.22,1,.36,1) ${i*0.18}s`;
+      el.style.left      = positions[i].x + 'px';
+      el.style.top       = positions[i].y + 'px';
+      el.style.transform = 'translate(-50%,-50%) scale(1)';
+      el.classList.add('visible');
+    }, 20 + i*60);
+  });
+}
+</script>
 </body>
 </html>
