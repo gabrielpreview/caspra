@@ -1,372 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Caspra Labs</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap');
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #04040c; font-family: 'Space Grotesk', sans-serif; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Caspra — Universe (prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ink:#eef0ff;
+    --muted:rgba(220,224,255,.55);
+    --faint:rgba(220,224,255,.30);
+    --bg0:#05060e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--bg0);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;cursor:grab;}
+  body.grabbing{cursor:grabbing}
+  #app{position:fixed;inset:0;
+    background:radial-gradient(120% 90% at 50% 42%, #1b1444 0%, #0c0a24 38%, #06060f 70%, #04040a 100%);}
+  canvas{display:block;position:fixed;inset:0;}
+  .vignette{position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:radial-gradient(ellipse at center, transparent 46%, rgba(3,3,8,.7) 100%);}
 
-    /* ── MAIN CANVAS (stars + nebula) ── */
-    #cvs { position: fixed; inset: 0; z-index: 0; }
+  .brand{position:fixed;top:28px;left:0;right:0;text-align:center;z-index:8;
+    font-size:12px;font-weight:500;letter-spacing:.46em;text-transform:uppercase;
+    color:var(--faint);pointer-events:none;}
+  .hint{position:fixed;bottom:26px;left:0;right:0;text-align:center;z-index:8;
+    font-size:11px;font-weight:400;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--faint);pointer-events:none;transition:opacity .6s ease;}
 
-    /* ── WORDMARK ── */
-    .wordmark {
-      position: fixed; top: 2rem; left: 50%; transform: translateX(-50%);
-      font-family: 'Space Mono', monospace; font-size: 0.65rem;
-      letter-spacing: 0.4em; text-transform: uppercase;
-      color: rgba(200,216,255,0.22); white-space: nowrap; z-index: 10;
-    }
+  #labels{position:fixed;inset:0;z-index:6;pointer-events:none;}
+  .label{position:absolute;transform:translate(-50%,18px);text-align:center;
+    pointer-events:auto;cursor:pointer;white-space:nowrap;
+    transition:transform .25s ease;}
+  .label .name{font-size:12px;font-weight:500;letter-spacing:.26em;text-transform:uppercase;
+    color:rgba(255,255,255,.9);text-shadow:0 1px 14px rgba(0,0,0,.7);}
+  .label .sub{font-size:10px;font-weight:400;letter-spacing:.1em;margin-top:5px;
+    color:var(--muted);text-shadow:0 1px 12px rgba(0,0,0,.7);}
+  .label.hover{transform:translate(-50%,16px) scale(1.05)}
+  .label.hover .name{color:#fff}
 
-    /* ── HINT ── */
-    .hint {
-      position: fixed; bottom: 3.2rem; left: 50%; transform: translateX(-50%);
-      font-size: 0.68rem; color: rgba(200,220,255,0.38);
-      letter-spacing: 0.1em; white-space: nowrap; z-index: 10;
-      transition: opacity 0.6s ease;
-      animation: breathe 3.5s ease-in-out infinite;
-    }
-    .hint.hidden { opacity: 0; pointer-events: none; }
-    @keyframes breathe { 0%,100%{opacity:0.38} 50%{opacity:0.65} }
+  #centerLabel{position:fixed;z-index:7;transform:translate(-50%,-50%);
+    pointer-events:auto;cursor:pointer;
+    width:clamp(240px,33vw,460px);aspect-ratio:129/29.9;
+    -webkit-mask:url(./logo.svg) center/contain no-repeat;
+    mask:url(./logo.svg) center/contain no-repeat;
+    -webkit-backdrop-filter:brightness(1.5) saturate(1.35) contrast(1.08);
+    backdrop-filter:brightness(1.5) saturate(1.35) contrast(1.08);}
 
-    /* ── NEBULA BUTTON (center) ── */
-    #nebula-btn {
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 5; cursor: pointer;
-      width: 220px; height: 220px;
-      border-radius: 50%;
-      background: transparent; border: none; outline: none;
-      transition: transform 0.5s cubic-bezier(.22,1,.36,1);
-    }
-    #nebula-btn:hover { transform: translate(-50%, -50%) scale(1.05); }
-    #nebula-btn canvas {
-      width: 100%; height: 100%;
-      border-radius: 50%; display: block;
-    }
-    .nebula-label {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'Space Mono', monospace;
-      font-size: 0.82rem; letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(230,225,255,0.82);
-      pointer-events: none;
-      transition: opacity 0.4s ease, letter-spacing 0.4s ease;
-    }
-    #nebula-btn:hover .nebula-label { letter-spacing: 0.28em; opacity: 1; }
+  .panel{position:fixed;top:0;right:0;height:100%;width:min(400px,88vw);z-index:10;
+    padding:54px 44px;display:flex;flex-direction:column;justify-content:center;gap:16px;
+    background:linear-gradient(270deg, rgba(9,9,22,.94) 0%, rgba(9,9,22,.8) 68%, rgba(9,9,22,0) 100%);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    transform:translateX(102%);transition:transform .6s cubic-bezier(.22,.61,.36,1);}
+  .panel.open{transform:translateX(0)}
+  .panel__idx{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--faint)}
+  .panel__accent{width:46px;height:3px;border-radius:3px;background:#9b7bf0}
+  .panel__kicker{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .panel__title{font-size:32px;font-weight:600;letter-spacing:.03em;line-height:1.05}
+  .panel__desc{font-size:14px;line-height:1.65;color:rgba(230,232,255,.75);max-width:32ch}
+  .panel__back{margin-top:14px;align-self:flex-start;cursor:pointer;
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+    background:transparent;border:1px solid rgba(255,255,255,.18);
+    padding:10px 18px;border-radius:999px;transition:all .25s ease;font-family:inherit;}
+  .panel__back:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+  .panel__cta{align-self:flex-start;cursor:pointer;text-decoration:none;
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#0a0a16;
+    background:var(--ink);padding:12px 22px;border-radius:999px;
+    transition:transform .2s ease,opacity .2s ease;}
+  .panel__cta:hover{transform:translateY(-1px);opacity:.9}
 
-    /* ── PRODUCT STARS ── */
-    .product-star {
-      position: fixed;
-      z-index: 8;
-      display: flex; flex-direction: column; align-items: center;
-      text-decoration: none;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(.22,1,.36,1);
-    }
-    .product-star.visible {
-      opacity: 1;
-      pointer-events: all;
-    }
-    .product-star:hover .star-dot { filter: brightness(2) saturate(1.5); transform: scale(1.5); }
-    .product-star:hover .star-name { opacity: 1; }
-
-    .star-dot {
-      border-radius: 50%;
-      transition: transform 0.35s ease, filter 0.35s ease;
-    }
-    .star-glow-ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid;
-      animation: pulse-ring 2.5s ease-out infinite;
-      pointer-events: none;
-    }
-    @keyframes pulse-ring {
-      0%   { transform: scale(1); opacity: 0.6; }
-      100% { transform: scale(2.8); opacity: 0; }
-    }
-
-    .star-name {
-      margin-top: 14px; text-align: center;
-      opacity: 0.75; transition: opacity 0.3s ease;
-    }
-    .s-name {
-      font-family: 'Space Mono', monospace; font-size: 0.65rem;
-      letter-spacing: 0.2em; text-transform: uppercase;
-      color: rgba(220,232,255,0.92); display: block; white-space: nowrap;
-    }
-    .s-sub {
-      font-size: 0.58rem; color: rgba(180,200,255,0.42);
-      margin-top: 3px; display: block; white-space: nowrap;
-    }
-
-    /* colors per product */
-    .ps-latamtax .star-dot {
-      width: 14px; height: 14px; background: #7eb8f7;
-      box-shadow: 0 0 16px 6px rgba(126,184,247,0.6), 0 0 50px 14px rgba(126,184,247,0.18);
-    }
-    .ps-latamtax .star-glow-ring { width: 14px; height: 14px; border-color: rgba(126,184,247,0.7); }
-
-    .ps-hotel .star-dot {
-      width: 16px; height: 16px; background: #a78bfa;
-      box-shadow: 0 0 18px 7px rgba(167,139,250,0.6), 0 0 55px 16px rgba(167,139,250,0.18);
-    }
-    .ps-hotel .star-glow-ring { width: 16px; height: 16px; border-color: rgba(167,139,250,0.7); }
-
-    .ps-aurelia .star-dot {
-      width: 13px; height: 13px; background: #5eead4;
-      box-shadow: 0 0 15px 5px rgba(94,234,212,0.6), 0 0 46px 12px rgba(94,234,212,0.18);
-    }
-    .ps-aurelia .star-glow-ring { width: 13px; height: 13px; border-color: rgba(94,234,212,0.7); }
-  </style>
+  #loader{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;gap:22px;
+    align-items:center;justify-content:center;background:var(--bg0);transition:opacity 1s ease;}
+  #loader img{width:140px;filter:brightness(0) invert(1);animation:pulse 1.8s ease-in-out infinite}
+  #loader span{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--faint)}
+  #loader.gone{opacity:0;pointer-events:none}
+  @keyframes pulse{0%,100%{opacity:.35}50%{opacity:.9}}
+</style>
 </head>
 <body>
+  <div id="app"></div>
+  <div class="vignette"></div>
 
-<!-- background: ambient stars -->
-<canvas id="cvs"></canvas>
+  <div class="brand">Caspra&nbsp;&nbsp;Labs</div>
+  <div class="hint" id="hint">Drag to rotate&nbsp;·&nbsp;Scroll to zoom&nbsp;·&nbsp;Click a star</div>
 
-<span class="wordmark">Caspra Labs</span>
+  <div id="labels"></div>
+  <a id="centerLabel" title="Caspra" aria-label="Caspra"></a>
 
-<!-- Center nebula button -->
-<button id="nebula-btn" onclick="expandProducts()">
-  <canvas id="nebula-cvs" width="440" height="440"></canvas>
-  <span class="nebula-label">Caspra</span>
-</button>
+  <aside class="panel" id="panel" aria-hidden="true">
+    <div class="panel__idx" id="panelIdx"></div>
+    <div class="panel__accent" id="panelAccent"></div>
+    <div class="panel__kicker" id="panelKicker"></div>
+    <h2 class="panel__title" id="panelTitle"></h2>
+    <p class="panel__desc" id="panelDesc"></p>
+    <a class="panel__cta" id="panelCta" target="_blank" rel="noopener">Open product ↗</a>
+    <button class="panel__back" id="panelBack">← Back to the universe</button>
+  </aside>
 
-<!-- Product stars (hidden initially) -->
-<a class="product-star ps-latamtax" id="ps-1" href="https://latamtax.bringitps.com" target="_blank">
-  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
-    <div class="star-glow-ring" style="animation-delay:0s"></div>
-    <div class="star-dot"></div>
-  </div>
-  <div class="star-name">
-    <span class="s-name">LatamTax</span>
-    <span class="s-sub">Tax Compliance</span>
-  </div>
-</a>
+  <div id="loader"><img src="./logo.svg" alt="Caspra" /><span>Loading the universe</span></div>
 
-<a class="product-star ps-hotel" id="ps-2" href="https://hotel360.bringitps.com" target="_blank">
-  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
-    <div class="star-glow-ring" style="animation-delay:0.8s"></div>
-    <div class="star-dot"></div>
-  </div>
-  <div class="star-name">
-    <span class="s-name">Hotel 360°</span>
-    <span class="s-sub">Hospitality Finance</span>
-  </div>
-</a>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+} }
+</script>
 
-<a class="product-star ps-aurelia" id="ps-3" href="https://gabrielpreview.github.io/caspra/h360" target="_blank">
-  <div style="position:relative;display:flex;align-items:center;justify-content:center;">
-    <div class="star-glow-ring" style="animation-delay:1.6s"></div>
-    <div class="star-dot"></div>
-  </div>
-  <div class="star-name">
-    <span class="s-name">Aurélia</span>
-    <span class="s-sub">NetSuite for Hotels</span>
-  </div>
-</a>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
-<p class="hint" id="hint">Click the nebula to explore</p>
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-<script>
-// ════════════════════════════════════════
-// 1. AMBIENT STAR FIELD (background)
-// ════════════════════════════════════════
-(function(){
-  const c = document.getElementById('cvs'), ctx = c.getContext('2d');
-  let W, H, stars = [];
+/* ============================================================
+   PRODUCTS — edit/add here. Each item becomes a star.
+   ============================================================ */
+const PRODUCTS = [
+  { id:'latamtax', name:'LATAMTAX', sub:'Tax Compliance',
+    desc:'Tax compliance and automation for operations across Latin America.',
+    color:0x5aa9f0, angle:150, radius:32, height:15 },
+  { id:'hotel360', name:'HOTEL 360°', sub:'NetSuite for Hospitality',
+    desc:'Oracle NetSuite implementation and end-to-end financial management for hospitality.',
+    link:'https://gabrielpreview.github.io/caspra/h360',
+    color:0xb98ce8, angle:24, radius:36, height:-11 },
+  { id:'healthcare360', name:'HEALTHCARE360', sub:'NetSuite for Healthcare',
+    desc:'Oracle NetSuite implementation and financial management for the healthcare sector.',
+    color:0x3fe0b0, angle:286, radius:31, height:-15 },
+];
+const CENTER = { id:'caspra', name:'CASPRA', sub:'Labs', isCenter:true,
+  desc:'The core of the Caspra constellation — each surrounding star is a product in the ecosystem.' };
 
-  function resize(){
-    W = c.width = window.innerWidth;
-    H = c.height = window.innerHeight;
-    stars = Array.from({length: 380}, () => ({
-      x: Math.random()*W, y: Math.random()*H,
-      r: Math.random()*0.9+0.1,
-      base: Math.random()*0.28+0.04,
-      spd: Math.random()*0.4+0.1,
-      ph: Math.random()*Math.PI*2,
-      // drift very slowly
-      vx: (Math.random()-.5)*0.04,
-      vy: (Math.random()-.5)*0.04,
-    }));
-  }
+/* ---------- helpers ---------- */
+const hexA=(h,a)=>`rgba(${(h>>16)&255},${(h>>8)&255},${h&255},${a})`;
+const easeOut=t=>1-Math.pow(1-t,3);
+const easeIO=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
 
-  function drawNebulaBg(){
-    ctx.fillStyle = '#04040c';
-    ctx.fillRect(0,0,W,H);
-    // soft nebula clouds in background — very dim
-    const blobs = [
-      {x:.18,y:.28,r:.5,c:'rgba(22,6,55,0.5)'},
-      {x:.78,y:.7, r:.38,c:'rgba(6,18,58,0.4)'},
-      {x:.5, y:.5, r:.28,c:'rgba(45,10,70,0.28)'},
-    ];
-    blobs.forEach(b=>{
-      const rx=b.x*W,ry=b.y*H,rr=b.r*Math.max(W,H);
-      const g=ctx.createRadialGradient(rx,ry,0,rx,ry,rr);
-      g.addColorStop(0,b.c); g.addColorStop(1,'rgba(4,4,12,0)');
-      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(rx,ry,rr,0,Math.PI*2); ctx.fill();
-    });
-  }
-
-  let t=0;
-  function loop(){
-    drawNebulaBg();
-    t += 0.008;
-    stars.forEach(s=>{
-      s.x += s.vx; s.y += s.vy;
-      if(s.x<0) s.x=W; if(s.x>W) s.x=0;
-      if(s.y<0) s.y=H; if(s.y>H) s.y=0;
-      const a = s.base * (0.5 + 0.5*Math.sin(t*s.spd+s.ph));
-      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle=`rgba(190,210,255,${a})`; ctx.fill();
-    });
-    requestAnimationFrame(loop);
-  }
-
-  window.addEventListener('resize', resize);
-  resize(); loop();
-})();
-
-// ════════════════════════════════════════
-// 2. NEBULA CANVAS (center button)
-// ════════════════════════════════════════
-(function(){
-  const c = document.getElementById('nebula-cvs'), ctx = c.getContext('2d');
-  const S = 440, CX = S/2, CY = S/2;
-
-  // particles: two layers
-  // Layer A — nebula cloud wisps (slow, large, transparent)
-  const wisps = Array.from({length:180}, ()=>({
-    ang: Math.random()*Math.PI*2,
-    r: Math.random()*90+10,
-    sz: Math.random()*22+8,
-    br: Math.random()*0.07+0.02,
-    hue: 230+Math.random()*80,
-    spd: (Math.random()-.5)*0.0003,
-    ph: Math.random()*Math.PI*2,
-  }));
-
-  // Layer B — star core particles (galaxy spiral)
-  const sparks = [];
-  for(let a=0;a<3;a++){
-    const off=(a/3)*Math.PI*2;
-    for(let i=0;i<160;i++){
-      const tt=i/160, ang=off+tt*Math.PI*3.8, rad=tt*82+8+(Math.random()-.5)*14;
-      sparks.push({
-        ba:ang, r:rad,
-        ox:(Math.random()-.5)*7, oy:(Math.random()-.5)*7,
-        sz:Math.random()*1.6+0.3,
-        br:Math.random()*0.45+0.15,
-        hue:210+Math.random()*80-a*30,
-        spd:0.00018+Math.random()*0.00012
-      });
-    }
-  }
-  // bright core
-  for(let i=0;i<60;i++) sparks.push({
-    ba:Math.random()*Math.PI*2, r:Math.random()*18,
-    ox:0,oy:0, sz:Math.random()*2.5+0.5,
-    br:Math.random()*0.75+0.4,
-    hue:225+Math.random()*40,
-    spd:0.0007+Math.random()*0.0004
-  });
-
-  let fr=0, t=0;
-  function draw(){
-    ctx.clearRect(0,0,S,S);
-
-    // outer glow halo
-    const halo = ctx.createRadialGradient(CX,CY,20,CX,CY,S/2);
-    halo.addColorStop(0,'rgba(90,50,180,0.18)');
-    halo.addColorStop(0.35,'rgba(40,20,100,0.1)');
-    halo.addColorStop(1,'rgba(4,4,12,0)');
-    ctx.fillStyle=halo; ctx.fillRect(0,0,S,S);
-
-    // nebula wisps
-    t += 0.004;
-    wisps.forEach(w=>{
-      const ang = w.ang + t*w.spd*10;
-      const px = CX + Math.cos(ang)*w.r, py = CY + Math.sin(ang)*w.r;
-      const pulse = w.br*(0.6+0.4*Math.sin(t*0.8+w.ph));
-      const g = ctx.createRadialGradient(px,py,0,px,py,w.sz);
-      g.addColorStop(0,`hsla(${w.hue},70%,75%,${pulse})`);
-      g.addColorStop(1,`hsla(${w.hue},70%,75%,0)`);
-      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(px,py,w.sz,0,Math.PI*2); ctx.fill();
-    });
-
-    // galaxy spiral sparks
-    sparks.forEach(p=>{
-      const ang=p.ba+fr*p.spd;
-      const px=CX+Math.cos(ang)*p.r+p.ox, py=CY+Math.sin(ang)*p.r+p.oy;
-      ctx.beginPath(); ctx.arc(px,py,p.sz,0,Math.PI*2);
-      ctx.fillStyle=`hsla(${p.hue},78%,84%,${p.br})`; ctx.fill();
-    });
-
-    // inner bright core
-    const core=ctx.createRadialGradient(CX,CY,0,CX,CY,30);
-    core.addColorStop(0,'rgba(200,180,255,0.35)');
-    core.addColorStop(0.5,'rgba(120,90,220,0.12)');
-    core.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=core; ctx.fillRect(0,0,S,S);
-
-    fr++;
-    requestAnimationFrame(draw);
-  }
-  draw();
-})();
-
-// ════════════════════════════════════════
-// 3. PRODUCT STARS — EXPAND ON CLICK
-// ════════════════════════════════════════
-let expanded = false;
-
-function expandProducts(){
-  if(expanded) return;
-  expanded = true;
-
-  const hint = document.getElementById('hint');
-  hint.classList.add('hidden');
-
-  // shrink nebula button slightly
-  const btn = document.getElementById('nebula-btn');
-  btn.style.transform = 'translate(-50%,-50%) scale(0.82)';
-  btn.style.cursor = 'default';
-  btn.onclick = null;
-
-  const W = window.innerWidth, H = window.innerHeight;
-  const cx = W/2, cy = H/2;
-
-  // positions: top-left, top-right, bottom-center
-  const positions = [
-    { x: cx - W*0.28, y: cy - H*0.22 },
-    { x: cx + W*0.28, y: cy - H*0.22 },
-    { x: cx,          y: cy + H*0.28  },
-  ];
-
-  const stars = ['ps-1','ps-2','ps-3'];
-  stars.forEach((id, i) => {
-    const el = document.getElementById(id);
-    // start at center
-    el.style.left  = cx + 'px';
-    el.style.top   = cy + 'px';
-    el.style.transform = 'translate(-50%,-50%) scale(0.2)';
-    el.style.transition = 'none';
-
-    setTimeout(()=>{
-      el.style.transition = `opacity 0.8s ease ${i*0.18}s, left 0.9s cubic-bezier(.22,1,.36,1) ${i*0.18}s, top 0.9s cubic-bezier(.22,1,.36,1) ${i*0.18}s, transform 0.9s cubic-bezier(.22,1,.36,1) ${i*0.18}s`;
-      el.style.left      = positions[i].x + 'px';
-      el.style.top       = positions[i].y + 'px';
-      el.style.transform = 'translate(-50%,-50%) scale(1)';
-      el.classList.add('visible');
-    }, 20 + i*60);
-  });
+function softTexture(inner,mid,edge){
+  const s=128,c=document.createElement('canvas');c.width=c.height=s;
+  const g=c.getContext('2d'),grd=g.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
+  grd.addColorStop(0,inner);grd.addColorStop(.25,mid);grd.addColorStop(1,edge);
+  g.fillStyle=grd;g.fillRect(0,0,s,s);
+  const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;return t;
 }
+const dotTex=softTexture('rgba(255,255,255,1)','rgba(255,255,255,.35)','rgba(255,255,255,0)');
+const glowCache={};
+const glowTex=c=>glowCache[c]||(glowCache[c]=softTexture('rgba(255,255,255,1)',hexA(c,.85),hexA(c,0)));
+
+/* ---------- renderer / scene / camera ---------- */
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+const PR=Math.min(devicePixelRatio,2);
+renderer.setPixelRatio(PR);
+renderer.setSize(innerWidth,innerHeight);
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.15;
+document.body.appendChild(renderer.domElement);
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,5000);
+const HOME_POS=new THREE.Vector3(0,12,72),HOME_TGT=new THREE.Vector3(0,0,0);
+camera.position.set(0,60,320);            // starts far away (intro)
+
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=.06;
+controls.enablePan=false;controls.minDistance=16;controls.maxDistance=190;
+controls.rotateSpeed=.55;controls.zoomSpeed=.8;
+controls.autoRotate=false;controls.autoRotateSpeed=.32;
+controls.target.copy(HOME_TGT);controls.enabled=false;   // locked during the intro
+
+/* ---------- background: nebula dome + color clouds ---------- */
+const loader=new THREE.TextureLoader();
+loader.load('./img.png',tex=>{
+  tex.colorSpace=THREE.SRGBColorSpace;
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(1100,48,32),
+    new THREE.MeshBasicMaterial({map:tex,side:THREE.BackSide,color:0x6a6892,depthWrite:false})));
+  startIntro();
+},undefined,startIntro);
+
+// volumetric color clouds in the background (depth)
+[[0x6a4bd0,-300,60,-220,420],[0x2f6bd0,300,-80,-260,460],[0xc24bb0,-120,-140,-340,380]]
+.forEach(([c,x,y,z,s])=>{
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(c),blending:THREE.AdditiveBlending,
+    depthWrite:false,opacity:.12}));
+  sp.scale.set(s,s,1);sp.position.set(x,y,z);scene.add(sp);
+});
+
+/* ---------- starfield (twinkling, via shader) ---------- */
+const N=reduce?2800:7200;
+const sg=new THREE.BufferGeometry();
+const pos=new Float32Array(N*3),col=new Float32Array(N*3),sz=new Float32Array(N),ph=new Float32Array(N);
+const pal=[[1,1,1],[1,1,1],[.62,.74,1],[.82,.66,1],[1,.86,.72]];
+for(let i=0;i<N;i++){
+  const r=140+Math.pow(Math.random(),.6)*460,th=Math.random()*Math.PI*2,p=Math.acos(2*Math.random()-1);
+  pos[i*3]=r*Math.sin(p)*Math.cos(th);pos[i*3+1]=r*Math.cos(p);pos[i*3+2]=r*Math.sin(p)*Math.sin(th);
+  const c=pal[Math.floor(Math.random()*pal.length)],b=.55+Math.random()*.45;
+  col[i*3]=c[0]*b;col[i*3+1]=c[1]*b;col[i*3+2]=c[2]*b;
+  sz[i]=1.6+Math.pow(Math.random(),2)*4.2;ph[i]=Math.random()*Math.PI*2;
+}
+sg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+sg.setAttribute('aColor',new THREE.BufferAttribute(col,3));
+sg.setAttribute('aSize',new THREE.BufferAttribute(sz,1));
+sg.setAttribute('aPhase',new THREE.BufferAttribute(ph,1));
+const starMat=new THREE.ShaderMaterial({
+  uniforms:{uTime:{value:0},uPR:{value:PR}},
+  transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
+  vertexShader:`attribute vec3 aColor;attribute float aSize;attribute float aPhase;
+    uniform float uTime;uniform float uPR;varying vec3 vC;
+    void main(){vC=aColor;vec4 mv=modelViewMatrix*vec4(position,1.0);
+      float tw=.62+.38*sin(uTime*1.6+aPhase);
+      gl_PointSize=aSize*tw*(260.0/-mv.z)*uPR;gl_Position=projectionMatrix*mv;}`,
+  fragmentShader:`varying vec3 vC;void main(){float d=length(gl_PointCoord-.5);
+      float a=smoothstep(.5,.0,d);gl_FragColor=vec4(vC,a);}`
+});
+const stars=new THREE.Points(sg,starMat);scene.add(stars);
+
+/* ---------- Caspra core + scattered stars (no orbits) ---------- */
+const sun=new THREE.Group();
+const sunHaze=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(0x9a5fd0),
+  blending:THREE.AdditiveBlending,depthWrite:false,opacity:.14}));
+sunHaze.scale.set(26,26,1);sun.add(sunHaze);
+sun.add(new THREE.Mesh(new THREE.SphereGeometry(0.7,24,24),new THREE.MeshBasicMaterial({color:0xd9d2ff})));
+const sunHalo=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(0x9b7bf0),
+  blending:THREE.AdditiveBlending,depthWrite:false,opacity:.4}));
+sunHalo.scale.set(10,10,1);sun.add(sunHalo);
+scene.add(sun);
+
+/* ---------- product stars ---------- */
+const items=[],interactive=[];
+const labelsEl=document.getElementById('labels');
+function makeLabel(p){
+  const el=document.createElement('div');el.className='label';
+  el.innerHTML=`<div class="name">${p.name}</div><div class="sub">${p.sub}</div>`;
+  el.querySelector('.sub').style.color=hexA(p.color,.72);
+  el.addEventListener('click',e=>{e.stopPropagation();select(p);});
+  labelsEl.appendChild(el);return el;
+}
+PRODUCTS.forEach((p,i)=>{
+  const a=p.angle*Math.PI/180;
+  const g=new THREE.Group();
+  g.position.set(Math.cos(a)*p.radius,p.height,Math.sin(a)*p.radius);
+  const core=new THREE.Mesh(new THREE.SphereGeometry(.6,20,20),new THREE.MeshBasicMaterial({color:p.color}));
+  const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(p.color),
+    blending:THREE.AdditiveBlending,depthWrite:false,opacity:.9}));
+  halo.scale.set(7,7,1);core.userData.p=p;halo.userData.p=p;
+  g.add(core,halo);scene.add(g);interactive.push(core,halo);
+  items.push({data:p,group:g,core,halo,label:makeLabel(p),scale:1,baseY:p.height,phase:i*2.1});
+});
+
+/* ---------- bloom ---------- */
+const composer=new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene,camera));
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.7,0.5,0.25));
+composer.addPass(new OutputPass());
+
+/* ---------- interaction ---------- */
+const ray=new THREE.Raycaster(),m=new THREE.Vector2();
+let hovered=null,selected=null,down=null,idleT=null,intro=true;
+const hintEl=document.getElementById('hint');
+const setM=e=>{m.x=(e.clientX/innerWidth)*2-1;m.y=-(e.clientY/innerHeight)*2+1;};
+const pick=()=>{ray.setFromCamera(m,camera);const h=ray.intersectObjects(interactive,false);return h.length?h[0].object.userData.p:null;};
+
+const cv=renderer.domElement;
+cv.addEventListener('pointermove',e=>{if(intro)return;setM(e);hovered=pick();cv.style.cursor=hovered?'pointer':'';});
+cv.addEventListener('pointerdown',e=>{down={x:e.clientX,y:e.clientY};document.body.classList.add('grabbing');});
+addEventListener('pointerup',e=>{document.body.classList.remove('grabbing');
+  if(!down||intro)return;const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y);down=null;
+  if(moved>6)return;setM(e);const p=pick();if(p)select(p);else if(selected)reset();});
+controls.addEventListener('start',()=>{controls.autoRotate=false;clearTimeout(idleT);});
+controls.addEventListener('end',()=>{clearTimeout(idleT);
+  idleT=setTimeout(()=>{if(!selected&&!reduce&&!intro)controls.autoRotate=true;},3500);});
+document.getElementById('centerLabel').addEventListener('click',e=>{e.preventDefault();select(CENTER);});
+document.getElementById('panelBack').addEventListener('click',reset);
+
+/* ---------- intro / fly-to / panel ---------- */
+let fly=null;
+function flyTo(p,t,dur){fly={fp:camera.position.clone(),tp:p.clone(),ft:controls.target.clone(),tt:t.clone(),k:0,dur:reduce?.001:dur,ease:easeIO};controls.autoRotate=false;}
+function startIntro(){
+  document.getElementById('loader').classList.add('gone');
+  fly={fp:camera.position.clone(),tp:HOME_POS.clone(),ft:controls.target.clone(),tt:HOME_TGT.clone(),k:0,dur:reduce?.001:2.6,ease:easeOut,isIntro:true};
+}
+function select(p){
+  selected=p;controls.autoRotate=false;
+  if(p.isCenter){flyTo(new THREE.Vector3(0,5,30),new THREE.Vector3(0,0,0),1.1);}
+  else{const it=items.find(i=>i.data===p);const wp=new THREE.Vector3();it.group.getWorldPosition(wp);
+    const dir=wp.clone().normalize();
+    flyTo(wp.clone().add(dir.multiplyScalar(7)).add(new THREE.Vector3(0,2.4,6.5)),wp,1.15);}
+  showPanel(p);
+}
+function reset(){selected=null;hidePanel();flyTo(HOME_POS,HOME_TGT,1.1);}
+
+const panel=document.getElementById('panel');
+function showPanel(p){
+  const c=p.isCenter?0x9b7bf0:p.color;
+  const idx=p.isCenter?'CORE':String(PRODUCTS.indexOf(p)+1).padStart(2,'0')+' / '+String(PRODUCTS.length).padStart(2,'0');
+  document.getElementById('panelIdx').textContent=idx;
+  const ac=document.getElementById('panelAccent');ac.style.background=hexA(c,1);
+  const k=document.getElementById('panelKicker');k.textContent=p.sub;k.style.color=hexA(c,.9);
+  document.getElementById('panelTitle').textContent=p.name;
+  document.getElementById('panelDesc').textContent=p.desc;
+  const cta=document.getElementById('panelCta');
+  if(p.link){cta.href=p.link;cta.style.display='';}else{cta.style.display='none';}
+  panel.classList.add('open');hintEl.style.opacity=0;
+}
+function hidePanel(){panel.classList.remove('open');hintEl.style.opacity=1;}
+
+/* ---------- labels ---------- */
+const centerLabel=document.getElementById('centerLabel');
+const _v=new THREE.Vector3(),_w=new THREE.Vector3();
+function place(el,world,mult){
+  _v.copy(world).project(camera);
+  if(_v.z>1){el.style.opacity=0;return;}
+  el.style.left=((_v.x*.5+.5)*innerWidth)+'px';
+  el.style.top=((-_v.y*.5+.5)*innerHeight)+'px';
+  el.style.opacity=clamp((185-camera.position.distanceTo(world))/120,0,1)*mult;
+}
+
+/* ---------- loop ---------- */
+let last=performance.now();
+function tick(now){
+  const dt=Math.min((now-last)/1000,.05);last=now;const t=now/1000;
+  if(!reduce){
+    starMat.uniforms.uTime.value=t;
+    stars.rotation.y+=0.0006;
+    const pu=1+0.05*Math.sin(t*1.4);sunHalo.scale.set(10*pu,10*pu,1);
+  }
+  items.forEach(it=>{
+    const foc=hovered?(it.data===hovered?1:.4):1;
+    const sc=(it.data===hovered?1.4:1)*(it.data===selected?1.25:1);
+    it.scale=lerp(it.scale,sc,.15);
+    it.halo.scale.set(7*it.scale,7*it.scale,1);
+    it.core.scale.setScalar(it.scale);
+    it.halo.material.opacity=lerp(it.halo.material.opacity,.9*foc,.12);
+    if(!reduce&&!selected)it.group.position.y=it.baseY+Math.sin(t*.6+it.phase)*.7;
+    it.label.classList.toggle('hover',it.data===hovered);
+  });
+  if(fly){
+    fly.k=Math.min(fly.k+dt/fly.dur,1);const k=fly.ease(fly.k);
+    camera.position.lerpVectors(fly.fp,fly.tp,k);
+    controls.target.lerpVectors(fly.ft,fly.tt,k);
+    if(fly.k>=1){if(fly.isIntro){intro=false;controls.enabled=true;if(!reduce)controls.autoRotate=true;}fly=null;}
+  }
+  controls.update();
+  items.forEach(it=>{it.group.getWorldPosition(_w);place(it.label,_w,selected&&it.data!==selected?.2:1);});
+  place(centerLabel,HOME_TGT,(selected&&!selected.isCenter)?0:1);
+  composer.render();
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+addEventListener('resize',()=>{
+  camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);composer.setSize(innerWidth,innerHeight);
+});
+
+window.__dbg={scene,camera,renderer,composer,items,sun,starMat,THREE,
+  forceHome(){intro=false;controls.enabled=true;camera.position.copy(HOME_POS);controls.target.copy(HOME_TGT);}};
 </script>
 </body>
 </html>
