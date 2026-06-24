@@ -76,15 +76,20 @@
     pointer-events: none;
   }
 
-  /* big rotating arc */
-  .hero-arc {
+  /* hero product illustration */
+  .hero-visual {
     position: absolute;
-    right: -6rem; top: 50%;
+    right: 2rem; top: 50%;
     transform: translateY(-50%);
-    width: 680px; height: 680px;
-    animation: spin-arc 30s linear infinite;
+    width: min(620px, 48vw); height: auto;
+    z-index: 1;
+    filter: drop-shadow(0 30px 60px rgba(0,0,0,0.55));
+    animation: float-visual 6s ease-in-out infinite;
   }
-  @keyframes spin-arc { to { transform: translateY(-50%) rotate(360deg); } }
+  @keyframes float-visual {
+    0%, 100% { transform: translateY(-50%); }
+    50%      { transform: translateY(calc(-50% - 14px)); }
+  }
 
   .hero-content {
     position: relative; z-index: 2;
@@ -92,8 +97,8 @@
   }
   .hero-eyebrow {
     display: inline-flex; align-items: center; gap: 0.5rem;
-    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--green);
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em;
+    color: var(--green);
     margin-bottom: 1.75rem;
   }
   .hero-eyebrow::before {
@@ -167,6 +172,14 @@
     position: relative; z-index: 1;
   }
   .metric:last-child { border-right: none; }
+  .metric-icon {
+    width: 38px; height: 38px; border-radius: 9px;
+    background: rgba(131,197,73,0.12);
+    border: 1px solid rgba(131,197,73,0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green); margin-bottom: 1.1rem;
+  }
+  .metric-icon svg { width: 18px; height: 18px; fill: currentColor; }
   .metric-value {
     font-size: 3rem; font-weight: 300; line-height: 1;
     background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -178,8 +191,8 @@
   /* ── SECTION BASE ── */
   section { padding: 7rem 4rem; }
   .section-eyebrow {
-    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--green);
+    font-size: 0.78rem; font-weight: 500; letter-spacing: 0.04em;
+    color: var(--green);
     margin-bottom: 1rem;
     display: flex; align-items: center; gap: 0.5rem;
   }
@@ -238,61 +251,151 @@
     pointer-events: none;
   }
   .how-layout {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 6rem; align-items: center; margin-top: 4rem;
+    display: grid; grid-template-columns: 1fr 1.15fr;
+    gap: 4rem; align-items: stretch; margin-top: 4rem;
   }
-  .how-steps { display: flex; flex-direction: column; gap: 0; }
+  .how-steps {
+    display: flex; flex-direction: column;
+    justify-content: space-between; gap: 0.5rem;
+  }
   .how-step {
-    display: flex; gap: 1.5rem;
-    padding: 1.75rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    position: relative;
-  }
-  .how-step:first-child { padding-top: 0; }
-  .how-step:last-child { border-bottom: none; }
-  .step-icon {
-    width: 36px; height: 36px; flex-shrink: 0;
-    border-radius: 8px;
-    background: rgba(131,197,73,0.12);
-    border: 1px solid rgba(131,197,73,0.25);
-    display: flex; align-items: center; justify-content: center;
-    margin-top: 2px;
-  }
-  .step-icon svg { width: 16px; height: 16px; }
-  .step-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; }
-  .step-desc { font-size: 0.85rem; color: var(--text-sec); line-height: 1.6; }
-
-  /* architecture diagram */
-  .arch-diagram {
-    background: rgba(0,0,0,0.4);
-    border: 1px solid rgba(131,197,73,0.2);
-    border-radius: 16px; padding: 2.5rem;
-    position: relative;
-  }
-  .arch-title {
-    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--text-sec); margin-bottom: 2rem; text-align: center;
-  }
-  .arch-layer {
-    display: flex; align-items: center; gap: 1rem;
+    display: flex; gap: 1.25rem; cursor: pointer;
+    align-items: center;
     padding: 1rem 1.25rem;
-    border-radius: 10px; margin-bottom: 0.75rem;
+    border-radius: 12px;
+    position: relative;
+    transition: background 0.25s;
   }
-  .arch-layer:last-child { margin-bottom: 0; }
-  .arch-layer.top { background: rgba(131,197,73,0.12); border: 1px solid rgba(131,197,73,0.3); }
-  .arch-layer.mid { background: rgba(0,133,117,0.12); border: 1px solid rgba(0,133,117,0.3); }
-  .arch-layer.bot { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
-  .arch-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .top .arch-dot { background: var(--green); }
-  .mid .arch-dot { background: var(--teal); }
-  .bot .arch-dot { background: rgba(255,255,255,0.3); }
-  .arch-layer-name { font-size: 0.8rem; font-weight: 600; flex: 1; }
-  .arch-layer-desc { font-size: 0.72rem; color: var(--text-sec); text-align: right; }
-  .arch-arrow {
-    text-align: center; color: rgba(131,197,73,0.4);
-    font-size: 1rem; margin: 0.25rem 0;
-    display: block;
+  .how-step:hover { background: rgba(255,255,255,0.02); }
+  .how-step.active { background: rgba(131,197,73,0.06); }
+  .step-icon {
+    width: 46px; height: 46px; flex-shrink: 0;
+    border-radius: 11px;
+    background: rgba(131,197,73,0.08);
+    border: 1px solid rgba(131,197,73,0.16);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(131,197,73,0.55);
+    transition: background 0.3s, border-color 0.3s, color 0.3s, box-shadow 0.3s;
   }
+  .step-icon svg { width: 21px; height: 21px; fill: currentColor; }
+  .how-step.active .step-icon {
+    background: var(--grad); border-color: transparent; color: var(--black);
+    box-shadow: 0 6px 18px rgba(131,197,73,0.22);
+  }
+  .step-title {
+    font-size: 0.95rem; font-weight: 600;
+    color: var(--text-sec); transition: color 0.25s;
+  }
+  .how-step:hover .step-title { color: var(--white); }
+  .how-step.active .step-title { color: var(--white); }
+  .step-desc {
+    font-size: 0.82rem; line-height: 1.5; margin-top: 0.35rem;
+    color: rgba(255,255,255,0.38);
+    transition: color 0.25s;
+  }
+  .how-step:hover .step-desc,
+  .how-step.active .step-desc { color: var(--text-sec); }
+
+  /* product screenshot mockup (browser frame, step-synced) */
+  .shot {
+    align-self: stretch;
+    display: flex; flex-direction: column;
+    border: 1px solid rgba(131,197,73,0.2);
+    border-radius: 14px; overflow: hidden;
+    background: #0a0a0a;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  }
+  .shot-bar, .shot-caption { flex: 0 0 auto; }
+  .shot-bar {
+    display: flex; align-items: center; gap: 0.45rem;
+    padding: 0.7rem 0.9rem;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .shot-bar span {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+  }
+  .shot-bar span:nth-child(1) { background: #ff5f57; }
+  .shot-bar span:nth-child(2) { background: #febc2e; }
+  .shot-bar span:nth-child(3) { background: #28c840; }
+  .shot-stage {
+    position: relative; width: 100%;
+    flex: 1 1 auto; min-height: 300px;
+    background: #0a0a0a; cursor: zoom-in;
+  }
+  .shot-expand {
+    position: absolute; top: 0.7rem; right: 0.7rem; z-index: 3;
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white); cursor: zoom-in;
+    opacity: 0; transform: translateY(-3px);
+    transition: opacity 0.25s, transform 0.25s, border-color 0.2s;
+    pointer-events: none;
+  }
+  .shot-stage:hover .shot-expand { opacity: 1; transform: translateY(0); }
+  .shot-expand:hover { border-color: rgba(131,197,73,0.5); }
+  .shot-expand svg { width: 15px; height: 15px; }
+  .shot-stage img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: top left;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  .shot-stage img.active { opacity: 1; }
+  .shot-caption {
+    display: flex; align-items: center; gap: 0.9rem;
+    padding: 0.85rem 1.1rem;
+    font-size: 0.8rem; color: var(--text-sec);
+    border-top: 1px solid rgba(255,255,255,0.07);
+  }
+  .shot-caption-text { flex: 1; }
+  /* rotation / progress dots */
+  .shot-dots { display: flex; align-items: center; gap: 0.4rem; flex-shrink: 0; }
+  .shot-dot {
+    position: relative; overflow: hidden;
+    width: 8px; height: 8px; border-radius: 5px; padding: 0;
+    background: rgba(255,255,255,0.18); border: none; cursor: pointer;
+    transition: width 0.35s ease, background 0.35s ease;
+  }
+  .shot-dot.active { width: 26px; background: rgba(131,197,73,0.22); }
+  .shot-dot .dot-fill {
+    position: absolute; inset: 0; border-radius: inherit;
+    background: var(--green);
+    transform: scaleX(0); transform-origin: left center;
+  }
+  .shot-dot.active .dot-fill { transform: scaleX(1); }
+  @keyframes dotfill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  /* lightbox */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.92);
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem; cursor: zoom-out;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .lightbox.open { opacity: 1; visibility: visible; }
+  .lightbox img {
+    max-width: 95vw; max-height: 90vh;
+    border-radius: 10px; border: 1px solid rgba(131,197,73,0.25);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    cursor: default;
+  }
+  .lightbox-close {
+    position: absolute; top: 1.5rem; right: 1.75rem;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2);
+    color: var(--white); font-size: 1.3rem; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.2s, border-color 0.2s;
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,0.15); border-color: var(--green); }
 
   /* ── CAPABILITIES ── */
   .capabilities { background: var(--black); }
@@ -301,25 +404,41 @@
     gap: 1.5rem; margin-top: 4rem;
   }
   .cap-card {
+    position: relative; cursor: pointer;
     padding: 2rem;
     border: 1px solid rgba(255,255,255,0.07);
     border-radius: 12px;
     background: var(--dark-green);
-    transition: border-color 0.25s, transform 0.25s;
+    transition: border-color 0.25s, transform 0.25s, background 0.25s;
   }
-  .cap-card:hover {
+  .cap-card:hover, .cap-card.open {
     border-color: rgba(131,197,73,0.3);
     transform: translateY(-3px);
   }
+  .cap-card::after {
+    content: '+';
+    position: absolute; top: 1.6rem; right: 1.6rem;
+    font-size: 1.25rem; font-weight: 300; line-height: 1;
+    color: var(--green); opacity: 0.7;
+    transition: transform 0.3s, opacity 0.2s;
+  }
+  .cap-card:hover::after, .cap-card.open::after { transform: rotate(45deg); opacity: 1; }
   .cap-icon {
     width: 40px; height: 40px; border-radius: 10px;
-    background: var(--grad);
+    background: var(--grad); color: var(--black);
     display: flex; align-items: center; justify-content: center;
     margin-bottom: 1.25rem;
   }
-  .cap-icon svg { width: 18px; height: 18px; color: var(--black); }
-  .cap-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.6rem; }
-  .cap-desc { font-size: 0.83rem; color: var(--text-sec); line-height: 1.7; }
+  .cap-icon svg { width: 19px; height: 19px; fill: currentColor; }
+  .cap-title { font-size: 0.95rem; font-weight: 600; }
+  .cap-desc {
+    font-size: 0.83rem; color: var(--text-sec); line-height: 1.7;
+    max-height: 0; opacity: 0; overflow: hidden; margin-top: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.4s ease;
+  }
+  .cap-card:hover .cap-desc, .cap-card.open .cap-desc {
+    max-height: 240px; opacity: 1; margin-top: 0.7rem;
+  }
 
   /* ── QUOTE ── */
   .quote-section {
@@ -368,8 +487,7 @@
   .seg-card:hover { background: #0f1e18; }
   .seg-tag {
     display: inline-block;
-    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.02em;
     color: var(--green);
     border: 1px solid rgba(131,197,73,0.3);
     border-radius: 4px; padding: 0.2rem 0.55rem;
@@ -380,7 +498,12 @@
 
   /* ── FAQ ── */
   .faq { background: var(--dark-green); }
-  .faq-list { margin-top: 3.5rem; max-width: 780px; }
+  .faq-list {
+    margin-top: 3.5rem; width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr;
+    column-gap: 4rem;
+    align-items: start;
+  }
   .faq-item {
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
@@ -465,12 +588,22 @@
     .problems-grid, .cap-grid, .seg-grid { grid-template-columns: 1fr; }
     .problem-card:nth-child(odd) { border-right: none; }
     .how-layout { grid-template-columns: 1fr; gap: 3rem; }
-    .hero-arc { width: 320px; height: 320px; right: -4rem; opacity: 0.4; }
+    .shot-expand { opacity: 1; transform: none; }
+    .faq-list { grid-template-columns: 1fr; column-gap: 0; }
+    .hero {
+      flex-direction: column; justify-content: center;
+      padding-top: 7rem;
+    }
+    .hero-visual {
+      position: static; transform: none;
+      width: 100%; max-width: 460px;
+      margin: 2.5rem auto 0; animation: none;
+    }
     footer { flex-direction: column; align-items: flex-start; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .hero-arc { animation: none; }
+    .hero-visual { animation: none; }
   }
 </style>
 </head>
@@ -491,25 +624,8 @@
 
 <!-- HERO -->
 <section class="hero">
-  <!-- animated arc SVG -->
-  <svg class="hero-arc" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#83C549"/>
-        <stop offset="50%" stop-color="#4A8F30"/>
-        <stop offset="100%" stop-color="#008575" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <!-- outer arc — opens to bottom-right -->
-    <path d="M 340 60 A 280 280 0 1 1 620 340" stroke="url(#arcGrad)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <!-- middle arc -->
-    <path d="M 340 120 A 220 220 0 1 1 560 340" stroke="url(#arcGrad)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
-    <!-- inner arc -->
-    <path d="M 340 180 A 160 160 0 1 1 500 340" stroke="url(#arcGrad)" stroke-width="1" fill="none" stroke-linecap="round" opacity="0.25"/>
-    <!-- highlight dot -->
-    <circle cx="340" cy="60" r="5" fill="#83C549"/>
-    <circle cx="340" cy="120" r="3.5" fill="#83C549" opacity="0.5"/>
-  </svg>
+  <!-- product illustration -->
+  <img class="hero-visual" src="hospitality.png" alt="Hotel 360° hospitality finance platform">
 
   <div class="hero-content">
     <div class="hero-eyebrow">Certified Oracle NetSuite Application</div>
@@ -535,21 +651,33 @@
 <!-- METRICS -->
 <div class="metrics">
   <div class="metric">
+    <div class="metric-icon">
+      <svg viewBox="0 0 19.93 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19.69,5.46c.32-.32.32-.83,0-1.15-.32-.32-.83-.32-1.15,0l-2.14,2.14c-1.54-1.31-3.49-2.16-5.63-2.33V1.63h2.24c.45,0,.81-.36.81-.81s-.36-.81-.81-.81h-6.1c-.45,0-.81.36-.81.81s.36.81.81.81h2.24v2.48c-2.14.17-4.08,1.02-5.63,2.33l-2.14-2.14c-.32-.32-.83-.32-1.15,0-.32.32-.32.83,0,1.15l2.14,2.14C.9,9.33,0,11.58,0,14.03,0,19.53,4.47,24,9.97,24s9.97-4.47,9.97-9.97c0-2.46-.9-4.7-2.37-6.44l2.14-2.14ZM18.31,14.03c0,4.6-3.74,8.34-8.34,8.34S1.63,18.63,1.63,14.03,5.37,5.69,9.97,5.69s8.34,3.74,8.34,8.34ZM9.97,7.12c-.45,0-.81.36-.81.81v6.1c0,.45.36.81.81.81h6.1c.45,0,.81-.36.81-.81,0-3.81-3.1-6.92-6.92-6.92Z"/></svg>
+    </div>
     <div class="metric-value">80%</div>
     <div class="metric-label">Faster Month-End Close</div>
     <div class="metric-desc">From ~10 days to under 2 days, across the customer base.</div>
   </div>
   <div class="metric">
+    <div class="metric-icon">
+      <svg viewBox="0 0 24 23.46" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22.33,14.04c.03-.17.05-.71.05-.96,0-2.93-1.25-5.74-3.43-7.71-.35-.31-.88-.29-1.2.06-.31.35-.29.88.06,1.2,1.91,1.72,2.99,4.24,2.86,6.88-2.06-.13-3.76,1.51-3.76,3.53s1.59,3.54,3.54,3.54,3.54-1.59,3.54-3.54c0-1.26-.67-2.38-1.67-3ZM20.46,18.89c-1.02,0-1.85-.83-1.85-1.85s.83-1.85,1.85-1.85,1.85.83,1.85,1.85-.83,1.85-1.85,1.85ZM16.47,21.55c-.18-.43-.68-.63-1.11-.45-3.12,1.31-6.75.68-9.25-1.62,2.11-2.24.54-5.97-2.57-5.97-1.95,0-3.54,1.59-3.54,3.54,0,2.4,2.36,4.12,4.65,3.36,3,3.01,7.52,3.87,11.37,2.25.43-.18.63-.68.45-1.11ZM3.54,18.89c-1.02,0-1.85-.83-1.85-1.85s.83-1.85,1.85-1.85,1.85.83,1.85,1.85-.83,1.85-1.85,1.85ZM12,0c-1.88,0-3.42,1.47-3.53,3.32-2.9,1.05-5.18,3.34-6.23,6.21-.16.44.07.92.51,1.08.44.16.93-.07,1.08-.51.84-2.32,2.67-4.19,4.95-5.1.56,1.22,1.79,2.07,3.22,2.07,1.95,0,3.54-1.59,3.54-3.54s-1.59-3.54-3.54-3.54ZM12,5.39c-1.02,0-1.85-.83-1.85-1.85s.83-1.85,1.85-1.85,1.85.83,1.85,1.85-.83,1.85-1.85,1.85Z"/></svg>
+    </div>
     <div class="metric-value">99%</div>
     <div class="metric-label">Transaction Automation</div>
     <div class="metric-desc">Across the full revenue cycle, PMS to GL.</div>
   </div>
   <div class="metric">
+    <div class="metric-icon">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M21.43,1.71h-1.71v-.86c0-.47-.38-.86-.86-.86s-.86.38-.86.86v.86H6v-.86c0-.47-.38-.86-.86-.86s-.86.38-.86.86v.86h-1.71C1.15,1.71,0,2.87,0,4.29v17.14c0,1.42,1.15,2.57,2.57,2.57h18.86c1.42,0,2.57-1.15,2.57-2.57V4.29c0-1.42-1.15-2.57-2.57-2.57ZM22.29,21.43c0,.47-.38.86-.86.86H2.57c-.47,0-.86-.38-.86-.86v-12.86h20.57v12.86ZM22.29,6.86H1.71v-2.57c0-.47.38-.86.86-.86h1.71v.86c0,.47.38.86.86.86s.86-.38.86-.86v-.86h12v.86c0,.47.38.86.86.86s.86-.38.86-.86v-.86h1.71c.47,0,.86.38.86.86v2.57ZM5.47,11.91h-1.29c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h1.29c.43,0,.77.35.77.77s-.35.77-.77.77ZM15.89,11.91h-2.6c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h2.6c.43,0,.77.35.77.77s-.35.77-.77.77ZM10.68,11.91h-2.6c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h2.6c.43,0,.77.35.77.77s-.35.77-.77.77ZM19.78,11.91h-1.29c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h1.29c.43,0,.77.35.77.77s-.35.77-.77.77ZM5.47,20.49h-1.29c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h1.29c.43,0,.77.35.77.77s-.35.77-.77.77ZM15.89,20.49h-2.6c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h2.6c.43,0,.77.35.77.77s-.35.77-.77.77ZM10.68,20.49h-2.6c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h2.6c.43,0,.77.35.77.77s-.35.77-.77.77ZM19.78,20.49h-1.29c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h1.29c.43,0,.77.35.77.77s-.35.77-.77.77ZM19.78,16.2h-.17c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h.17c.43,0,.77.35.77.77s-.35.77-.77.77ZM17.04,16.2h-2.57c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h2.57c.43,0,.77.35.77.77s-.35.77-.77.77ZM11.9,16.2h-2.57c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h2.57c.43,0,.77.35.77.77s-.35.77-.77.77ZM6.76,16.2h-2.57c-.43,0-.77-.35-.77-.77s.35-.77.77-.77h2.57c.43,0,.77.35.77.77s-.35.77-.77.77Z"/></svg>
+    </div>
     <div class="metric-value">Daily</div>
     <div class="metric-label">Automated Reconciliation</div>
     <div class="metric-desc">Replaces monthly manual matching processes.</div>
   </div>
   <div class="metric">
+    <div class="metric-icon">
+      <svg viewBox="0 0 24 17.14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10.29,3.43c-1.89,0-3.43,1.53-3.43,3.43s1.54,3.43,3.43,3.43,3.43-1.53,3.43-3.43-1.53-3.43-3.43-3.43ZM10.29,8.57c-.95,0-1.71-.77-1.71-1.71s.77-1.71,1.71-1.71,1.71.77,1.71,1.71-.77,1.71-1.71,1.71ZM21.43,3.43h-.86v-.86c0-1.42-1.15-2.57-2.57-2.57H2.57C1.15,0,0,1.15,0,2.57v8.57c0,1.42,1.15,2.57,2.57,2.57h.86v.86c0,1.42,1.15,2.57,2.57,2.57h15.43c1.42,0,2.57-1.15,2.57-2.57V6c0-1.42-1.15-2.57-2.57-2.57ZM2.57,12c-.47,0-.86-.38-.86-.86V2.57c0-.47.38-.86.86-.86h15.43c.47,0,.86.38.86.86v8.57c0,.47-.38.86-.86.86H2.57ZM22.29,14.57c0,.47-.38.86-.86.86H6c-.47,0-.86-.38-.86-.86v-.86h12.86c1.42,0,2.57-1.15,2.57-2.57v-6h.86c.47,0,.86.38.86.86v8.57Z"/></svg>
+    </div>
     <div class="metric-value">14 mo</div>
     <div class="metric-label">Average Payback Period</div>
     <div class="metric-desc">Based on measured customer implementations.</div>
@@ -594,12 +722,9 @@
 
   <div class="how-layout">
     <div class="how-steps">
-      <div class="how-step">
+      <div class="how-step active">
         <div class="step-icon">
-          <svg viewBox="0 0 16 16" fill="none" stroke="#83C549" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="1" y="3" width="14" height="10" rx="2"/>
-            <path d="M5 7h6M5 10h4"/>
-          </svg>
+          <svg viewBox="0 0 23.79 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23.74,10.03l-.91-2.46-2.01-5.8C20.52.72,19.57,0,18.49,0H5.3c-1.06,0-2,.69-2.31,1.7L.97,7.59.05,10.07c-.03.1-.05.2-.05.3.02.83.32,1.63.85,2.26v8.82c0,1.41,1.14,2.56,2.56,2.56h17.04c1.41,0,2.56-1.14,2.56-2.56v-8.9c.5-.63.78-1.41.78-2.22,0-.1-.02-.2-.05-.3ZM9.37,22.3h-3.41v-3.98c.02-.64.55-1.15,1.19-1.13h1.02c.64-.01,1.17.49,1.19,1.13v3.98ZM21.3,21.44c0,.47-.38.85-.85.85h-9.37v-3.98c-.02-1.58-1.32-2.85-2.9-2.84h-1.02c-1.58,0-2.87,1.26-2.9,2.84v3.98h-.85c-.47,0-.85-.38-.85-.85v-7.67c.34.12.7.19,1.06.2,1.07,0,2.08-.49,2.76-1.31.15.19.32.36.51.51,1.52,1.24,3.77,1.01,5.01-.51.15.19.32.36.51.51,1.52,1.24,3.77,1.01,5.01-.51.68.83,1.69,1.31,2.76,1.31.38,0,.76-.08,1.12-.2v7.67ZM20.25,12.24c-1.05.02-1.93-.81-1.95-1.87,0-.47-.38-.85-.85-.85s-.85.38-.85.85c0,1.05-.85,1.91-1.91,1.91-1.05,0-1.91-.85-1.91-1.91,0-.47-.38-.85-.85-.85s-.85.38-.85.85c0,1.06-.86,1.93-1.93,1.93s-1.93-.86-1.93-1.93c0-.47-.38-.85-.85-.85s-.85.38-.85.85c.03,1.05-.81,1.93-1.86,1.96-1.05.03-1.93-.81-1.96-1.86l.85-2.34,2.06-5.87c.08-.31.36-.52.68-.52h13.23c.34,0,.63.25.7.58l2.03,5.88.85,2.32c-.09.97-.89,1.71-1.86,1.73ZM19.6,16.33c0,.47-.38.85-.85.85h-5.11c-.47,0-.85-.38-.85-.85s.38-.85.85-.85h5.11c.47,0,.85.38.85.85Z"/></svg>
         </div>
         <div>
           <div class="step-title">PMS & POS capture every transaction</div>
@@ -608,10 +733,7 @@
       </div>
       <div class="how-step">
         <div class="step-icon">
-          <svg viewBox="0 0 16 16" fill="none" stroke="#83C549" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="8" cy="8" r="6"/>
-            <path d="M8 4v4l3 2"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22.29,8.57h-2.29l1.58-1.65s0,0,0,0c.65-.69.62-1.77-.06-2.42l-2.49-2.36s0,0,0,0c-.69-.65-1.77-.62-2.42.06l-1.17,1.23v-1.71c0-.95-.77-1.71-1.71-1.71h-3.43c-.95,0-1.71.77-1.71,1.71v1.94l-1.36-1.4s0,0,0,0c-.67-.67-1.76-.67-2.42,0l-2.45,2.41s0,0,0,0c-.67.67-.67,1.76,0,2.42l1.47,1.48H1.71c-.95,0-1.71.77-1.71,1.71v3.43c0,.95.77,1.71,1.71,1.71h2.29l-1.58,1.66h0c-.65.69-.62,1.77.06,2.43l2.49,2.35s0,0,0,0c.69.65,1.77.62,2.42-.06l1.17-1.23v1.71c0,.95.77,1.71,1.71,1.71h3.43c.95,0,1.71-.77,1.71-1.71v-1.94l1.38,1.4s0,0,0,0c.67.67,1.76.67,2.42,0l2.43-2.41s0,0,0,0c.67-.67.67-1.76,0-2.42l-1.47-1.48h2.08c.95,0,1.71-.77,1.71-1.71v-3.43c0-.95-.77-1.71-1.71-1.71ZM22.29,13.71h-3.63l-.21.57c-.08.24-.18.47-.29.7l-.27.54,2.57,2.57-2.43,2.41-2.57-2.57-.56.26c-.2.1-.4.19-.62.26l-.57.21v3.63h-3.43v-3.63l-.57-.21c-.17-.06-.34-.12-.51-.2l-.56-.25-2.49,2.63-2.49-2.36,2.49-2.63-.27-.54c-.13-.26-.25-.54-.34-.81l-.21-.57H1.71v-3.43h3.63l.23-.58c.08-.24.18-.47.29-.7l.27-.54-2.57-2.57,2.41-2.4,2.57,2.57.56-.26c.2-.1.4-.19.62-.26l.57-.21V1.71h3.43v3.63l.57.21c.17.06.34.12.51.2l.56.25,2.49-2.63,2.49,2.36-2.49,2.63.27.54c.13.26.25.54.34.81l.21.57h3.63v3.43ZM12,16.1c-2.26,0-4.1-1.83-4.1-4.1s1.83-4.1,4.1-4.1,4.1,1.83,4.1,4.1-1.83,4.1-4.1,4.1Z"/></svg>
         </div>
         <div>
           <div class="step-title">Hotel 360° applies USALI rules in real time</div>
@@ -620,9 +742,7 @@
       </div>
       <div class="how-step">
         <div class="step-icon">
-          <svg viewBox="0 0 16 16" fill="none" stroke="#83C549" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 13l4-4 3 3 5-6"/>
-          </svg>
+          <svg viewBox="0 0 23.6 23.6" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.8,0h-12c-1.54,0-2.8,1.26-2.8,2.8v3.2h-3.2c-1.54,0-2.8,1.26-2.8,2.8v11c0,2.1,1.7,3.8,3.8,3.8h17c1.54,0,2.8-1.26,2.8-2.8V2.8c0-1.54-1.26-2.8-2.8-2.8ZM6,19.8c0,1.21-.99,2.2-2.2,2.2s-2.2-.99-2.2-2.2v-11c0-.66.54-1.2,1.2-1.2h3.2v12.2ZM22,20.8c0,.66-.54,1.2-1.2,1.2H6.89c.44-.62.71-1.38.71-2.2V2.8c0-.66.54-1.2,1.2-1.2h12c.66,0,1.2.54,1.2,1.2v18ZM18.12,4h-6.65c-.81,0-1.48.66-1.48,1.48v2.65c0,.81.66,1.48,1.48,1.48h6.65c.81,0,1.48-.66,1.48-1.48v-2.65c0-.81-.66-1.48-1.48-1.48ZM19.6,12.13c0,.44-.36.8-.8.8h-8c-.44,0-.8-.36-.8-.8s.36-.8.8-.8h8c.44,0,.8.36.8.8ZM17.6,18.8c0,.44-.36.8-.8.8h-6c-.44,0-.8-.36-.8-.8s.36-.8.8-.8h6c.44,0,.8.36.8.8ZM10,15.47c0-.44.36-.8.8-.8h2c.44,0,.8.36.8.8s-.36.8-.8.8h-2c-.44,0-.8-.36-.8-.8ZM19.6,15.47c0,.44-.36.8-.8.8h-3.27c-.44,0-.8-.36-.8-.8s.36-.8.8-.8h3.27c.44,0,.8.36.8.8Z"/></svg>
         </div>
         <div>
           <div class="step-title">NetSuite GL updates continuously</div>
@@ -631,10 +751,7 @@
       </div>
       <div class="how-step">
         <div class="step-icon">
-          <svg viewBox="0 0 16 16" fill="none" stroke="#83C549" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 1v5m0 0l-2-2m2 2l2-2"/>
-            <rect x="2" y="10" width="12" height="5" rx="1.5"/>
-          </svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M14,15.3c-.12,0-.24-.03-.35-.08l-1.68-.82-1.6.82c-.12.06-.24.09-.36.09-.29,0-.57-.16-.71-.44-.2-.39-.04-.88.35-1.08l1.52-.78v-1.51c0-.44.36-.8.8-.8s.8.36.8.8v1.5l1.59.78c.4.2.56.67.37,1.07-.14.28-.42.45-.72.45ZM16.88,4.88c0,2.7-2.19,4.88-4.88,4.88s-4.88-2.19-4.88-4.88S9.3,0,12,0s4.88,2.19,4.88,4.88ZM13.95,7.51c-.51-.53-1.2-.85-1.96-.85s-1.44.32-1.95.84c.55.41,1.22.66,1.96.66s1.4-.25,1.95-.66ZM15.28,4.88c0-1.81-1.47-3.28-3.28-3.28s-3.28,1.47-3.28,3.28c0,.49.11.95.31,1.36.8-.75,1.85-1.19,2.97-1.19s2.18.44,2.98,1.2c.2-.42.31-.88.31-1.37ZM12,4.79c.8,0,1.45-.65,1.45-1.45s-.65-1.45-1.45-1.45-1.45.65-1.45,1.45.65,1.45,1.45,1.45ZM24,19.12c0,2.7-2.19,4.88-4.88,4.88s-4.88-2.19-4.88-4.88,2.19-4.88,4.88-4.88,4.88,2.19,4.88,4.88ZM21.07,21.74c-.51-.53-1.2-.85-1.96-.85s-1.44.32-1.95.84c.55.41,1.22.66,1.96.66s1.4-.25,1.95-.66ZM22.4,19.12c0-1.81-1.47-3.28-3.28-3.28s-3.28,1.47-3.28,3.28c0,.49.11.95.31,1.36.8-.75,1.85-1.19,2.97-1.19s2.18.44,2.98,1.2c.19-.42.31-.88.31-1.37ZM19.12,19.02c.8,0,1.45-.65,1.45-1.45s-.65-1.45-1.45-1.45-1.45.65-1.45,1.45.65,1.45,1.45,1.45ZM9.76,19.12c0,2.7-2.19,4.88-4.88,4.88S0,21.81,0,19.12s2.19-4.88,4.88-4.88,4.88,2.19,4.88,4.88ZM6.83,21.74c-.51-.53-1.2-.85-1.96-.85s-1.44.32-1.95.84c.55.41,1.22.66,1.96.66s1.4-.25,1.95-.66ZM8.16,19.12c0-1.81-1.47-3.28-3.28-3.28s-3.28,1.47-3.28,3.28c0,.49.11.95.31,1.36.8-.75,1.85-1.19,2.97-1.19s2.18.44,2.98,1.2c.2-.42.31-.88.31-1.37ZM4.88,19.02c.8,0,1.45-.65,1.45-1.45s-.65-1.45-1.45-1.45-1.45.65-1.45,1.45.65,1.45,1.45,1.45Z"/></svg>
         </div>
         <div>
           <div class="step-title">Finance teams shift to strategic advisory</div>
@@ -643,24 +760,25 @@
       </div>
     </div>
 
-    <div class="arch-diagram">
-      <div class="arch-title">Integration Architecture</div>
-      <div class="arch-layer top">
-        <div class="arch-dot"></div>
-        <div class="arch-layer-name">NetSuite ERP</div>
-        <div class="arch-layer-desc">GL · AP · AR · Assets · Taxes</div>
+    <div class="shot">
+      <div class="shot-bar"><span></span><span></span><span></span></div>
+      <div class="shot-stage">
+        <img class="active" src="images/dashboard.png" alt="Hotel 360° main dashboard — property viewer with RevPAR, ADR, GOPPAR and occupancy across every entity">
+        <img src="images/usali.png" alt="USALI v12 Butterfly P&L report — actuals, budget and variance side by side">
+        <img src="images/bi.png" alt="CFO business intelligence dashboard — revenue, GOP margin, EBITDA and RevPAR growth">
+        <img src="images/marcus.png" alt="Marcus AI assistant supporting the finance team inside Hotel 360°">
+        <button class="shot-expand" type="button" aria-label="Expand screenshot">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2H2v4M10 14h4v-4M14 6V2h-4M2 10v4h4"/></svg>
+        </button>
       </div>
-      <span class="arch-arrow">↕</span>
-      <div class="arch-layer mid">
-        <div class="arch-dot"></div>
-        <div class="arch-layer-name">Hotel 360° Layer</div>
-        <div class="arch-layer-desc">USALI · Rules Engine · AI Stack</div>
-      </div>
-      <span class="arch-arrow">↕</span>
-      <div class="arch-layer bot">
-        <div class="arch-dot"></div>
-        <div class="arch-layer-name">PMS & POS</div>
-        <div class="arch-layer-desc">Opera · Simphony · Others</div>
+      <div class="shot-caption">
+        <div class="shot-dots" role="tablist" aria-label="How it works steps">
+          <button class="shot-dot active" type="button" aria-label="Step 1"><span class="dot-fill"></span></button>
+          <button class="shot-dot" type="button" aria-label="Step 2"><span class="dot-fill"></span></button>
+          <button class="shot-dot" type="button" aria-label="Step 3"><span class="dot-fill"></span></button>
+          <button class="shot-dot" type="button" aria-label="Step 4"><span class="dot-fill"></span></button>
+        </div>
+        <span class="shot-caption-text">Every property's transactions, captured and aggregated in one view.</span>
       </div>
     </div>
   </div>
@@ -673,44 +791,44 @@
   <p class="section-sub">No custom code. No configuration sprints. Hospitality workflows are already there the day you go live.</p>
 
   <div class="cap-grid">
-    <div class="cap-card">
+    <div class="cap-card" onclick="toggleCap(this)">
       <div class="cap-icon">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 14l4-4 3 3 5-6M16 4h-4v4"/></svg>
+        <svg viewBox="0 0 24 23.46" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M22.33,14.04c.03-.17.05-.71.05-.96,0-2.93-1.25-5.74-3.43-7.71-.35-.31-.88-.29-1.2.06-.31.35-.29.88.06,1.2,1.91,1.72,2.99,4.24,2.86,6.88-2.06-.13-3.76,1.51-3.76,3.53s1.59,3.54,3.54,3.54,3.54-1.59,3.54-3.54c0-1.26-.67-2.38-1.67-3ZM20.46,18.89c-1.02,0-1.85-.83-1.85-1.85s.83-1.85,1.85-1.85,1.85.83,1.85,1.85-.83,1.85-1.85,1.85ZM16.47,21.55c-.18-.43-.68-.63-1.11-.45-3.12,1.31-6.75.68-9.25-1.62,2.11-2.24.54-5.97-2.57-5.97-1.95,0-3.54,1.59-3.54,3.54,0,2.4,2.36,4.12,4.65,3.36,3,3.01,7.52,3.87,11.37,2.25.43-.18.63-.68.45-1.11ZM3.54,18.89c-1.02,0-1.85-.83-1.85-1.85s.83-1.85,1.85-1.85,1.85.83,1.85,1.85-.83,1.85-1.85,1.85ZM12,0c-1.88,0-3.42,1.47-3.53,3.32-2.9,1.05-5.18,3.34-6.23,6.21-.16.44.07.92.51,1.08.44.16.93-.07,1.08-.51.84-2.32,2.67-4.19,4.95-5.1.56,1.22,1.79,2.07,3.22,2.07,1.95,0,3.54-1.59,3.54-3.54s-1.59-3.54-3.54-3.54ZM12,5.39c-1.02,0-1.85-.83-1.85-1.85s.83-1.85,1.85-1.85,1.85.83,1.85,1.85-.83,1.85-1.85,1.85Z"/></svg>
       </div>
       <div class="cap-title">Automated Revenue Cycle</div>
       <p class="cap-desc">Every PMS and POS transaction flows directly into the general ledger. Eliminate manual data entry across your entire property portfolio.</p>
     </div>
-    <div class="cap-card">
+    <div class="cap-card" onclick="toggleCap(this)">
       <div class="cap-icon">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l2.5 2.5"/></svg>
+        <svg viewBox="0 0 21.39 21.4" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M7.4,18.7c0,.39-.31.7-.7.7H2.7c-.39,0-.7-.31-.7-.7V2.39l-.8.8c-.14.14-.32.21-.5.21s-.36-.07-.5-.21c-.27-.27-.27-.72,0-.99L2.21.2c.06-.06.14-.12.23-.15.17-.07.36-.07.54,0,.09.04.16.09.23.15l2,2c.27.27.27.72,0,.99-.14.14-.32.21-.5.21s-.36-.07-.5-.21l-.8-.8v15.61h3.3c.39,0,.7.31.7.7ZM21.35,18.95c.02-.06.04-.12.04-.18,0-.03,0-.05,0-.08,0-.06-.01-.12-.03-.18,0-.02,0-.04-.02-.07,0,0,0-.01,0-.02-.03-.07-.07-.13-.12-.19,0,0,0,0,0-.01l-2-2.18c-.26-.28-.7-.3-.99-.04-.29.26-.3.7-.04.99l.93,1.01h-4.41c-.39,0-.7.31-.7.7s.31.7.7.7h4.31l-.81.8c-.27.27-.27.72,0,.99.14.14.32.21.5.21s.36-.07.5-.21l2-2c.06-.06.1-.12.13-.19,0-.02.01-.04.02-.06ZM11.7,18h-2c-.39,0-.7.31-.7.7s.31.7.7.7h2c.39,0,.7-.31.7-.7s-.31-.7-.7-.7ZM20.7,4.7c0,2.21-1.79,4-4,4-.85,0-1.64-.27-2.29-.72l-4.16,4.16c.28.46.45.99.45,1.56,0,1.66-1.34,3-3,3s-3-1.34-3-3,1.34-3,3-3c.57,0,1.1.17,1.56.45l4.16-4.16c-.45-.65-.72-1.43-.72-2.29,0-2.21,1.79-4,4-4s4,1.79,4,4ZM9.3,13.7c0-.88-.72-1.6-1.6-1.6s-1.6.72-1.6,1.6.72,1.6,1.6,1.6,1.6-.72,1.6-1.6ZM19.3,4.7c0-1.43-1.17-2.6-2.6-2.6s-2.6,1.17-2.6,2.6,1.17,2.6,2.6,2.6,2.6-1.17,2.6-2.6Z"/></svg>
       </div>
       <div class="cap-title">Real-Time Financial Data</div>
       <p class="cap-desc">Access financial and operational data as transactions occur. ADR, RevPAR, occupancy — available today, not next week.</p>
     </div>
-    <div class="cap-card">
+    <div class="cap-card" onclick="toggleCap(this)">
       <div class="cap-icon">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="14" height="10" rx="2"/><path d="M6 8h6M6 11h4"/></svg>
+        <svg viewBox="0 0 20.58 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10.28,12c3.31,0,6-2.69,6-6S13.6,0,10.28,0s-6,2.69-6,6,2.69,6,6,6ZM10.28,1.71c2.37,0,4.29,1.92,4.29,4.29s-1.92,4.29-4.29,4.29-4.29-1.92-4.29-4.29S7.92,1.71,10.28,1.71ZM20.5,21.01c-1.11-4.29-5.31-7.29-10.22-7.29S1.17,16.71.07,21.01c-.17.69-.01,1.43.43,1.99.5.63,1.27,1,2.07,1h15.43c.82,0,1.6-.36,2.11-1,.43-.57.58-1.3.39-1.99ZM18.72,21.94c-.18.22-.44.34-.72.34H2.57c-.29,0-.57-.12-.75-.34-.12-.14-.15-.34-.1-.51.9-3.48,4.49-6,8.57-6s7.65,2.57,8.57,6c.04.18,0,.38-.14.51Z"/></svg>
       </div>
       <div class="cap-title">Guest Journey & City Ledger</div>
       <p class="cap-desc">Complete financial view of each guest — invoices, payments, deposits, and receivables — all in NetSuite, with full dunning cycle support.</p>
     </div>
-    <div class="cap-card">
+    <div class="cap-card" onclick="toggleCap(this)">
       <div class="cap-icon">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M9 3v12"/><circle cx="9" cy="9" r="7"/></svg>
+        <svg viewBox="0 0 24 19.51" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M23.21,13.46h-1.46V3.03c0-1.67-1.36-3.03-3.03-3.03H5.27c-1.67,0-3.03,1.36-3.03,3.03v10.43H.79c-.43,0-.79.35-.79.79v2.24c0,1.67,1.36,3.03,3.03,3.03h17.94c1.67,0,3.03-1.36,3.03-3.03v-2.24c0-.43-.35-.79-.79-.79ZM3.81,3.03c0-.8.65-1.46,1.46-1.46h13.46c.8,0,1.46.65,1.46,1.46v10.43H3.81V3.03ZM22.43,16.49c0,.8-.65,1.46-1.46,1.46H3.03c-.8,0-1.46-.65-1.46-1.46v-1.46h20.86v1.46ZM18.08,3.52c.35.26.42.75.16,1.1l-3.36,4.49c-.23.3-.64.4-.98.23l-3.9-1.95-2.97,3.96c-.15.21-.39.31-.63.31-.16,0-.33-.05-.47-.16-.35-.26-.42-.75-.16-1.1l3.36-4.49c.23-.3.64-.4.98-.23l3.9,1.95,2.97-3.96c.26-.35.75-.42,1.1-.16Z"/></svg>
       </div>
       <div class="cap-title">USALI v12 Reporting</div>
       <p class="cap-desc">The global lodging accounting standard applied automatically across every property — Butterfly formats, drill-downs, consolidated views.</p>
     </div>
-    <div class="cap-card">
+    <div class="cap-card" onclick="toggleCap(this)">
       <div class="cap-icon">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2"/><circle cx="12" cy="6" r="2"/><path d="M8 11l4-5"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19.62,11.38c-2.32-.86-4.14-2.68-5-5l-1.62-4.38-1.62,4.38c-.86,2.32-2.68,4.14-5,5l-4.38,1.62,4.38,1.62c2.32.86,4.14,2.68,5,5l1.62,4.38,1.62-4.38c.86-2.32,2.68-4.14,5-5l4.38-1.62-4.38-1.62ZM19.07,13.12c-2.76,1.02-4.92,3.19-5.95,5.95l-.12.32-.12-.32c-1.02-2.76-3.19-4.92-5.95-5.95l-.32-.12.32-.12c2.76-1.02,4.92-3.19,5.95-5.95l.12-.32.12.32c1.02,2.76,3.19,4.92,5.95,5.95l.32.12-.32.12ZM9.27,4.73c-1.85-.69-3.31-2.15-4-4l-.27-.73-.27.73c-.69,1.85-2.15,3.31-4,4l-.73.27.73.27c1.85.69,3.31,2.15,4,4l.27.73.27-.73c.69-1.85,2.15-3.31,4-4l.73-.27-.73-.27ZM5,6.5c-.43-.56-.94-1.06-1.5-1.5.56-.43,1.06-.94,1.5-1.5.43.56.94,1.06,1.5,1.5-.56.43-1.06.94-1.5,1.5Z"/></svg>
       </div>
       <div class="cap-title">AI-Enabled Architecture</div>
       <p class="cap-desc">Train and deploy built-in AI agents to automate transactional tasks with human oversight. MCP connections, agentic workflows, 24/7 coverage.</p>
     </div>
-    <div class="cap-card">
+    <div class="cap-card" onclick="toggleCap(this)">
       <div class="cap-icon">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="9" r="3"/><circle cx="13" cy="9" r="3"/><path d="M8 9h2"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12,0C5.37,0,0,5.37,0,12s5.37,12,12,12,12-5.37,12-12S18.63,0,12,0ZM21.22,7.2h-4.64c-.39-2.14-1.03-3.95-1.83-5.22,2.81.77,5.14,2.69,6.47,5.22ZM15.4,12c0,1.15-.07,2.22-.19,3.2h-6.41c-.12-.98-.19-2.05-.19-3.2s.07-2.22.19-3.2h6.41c.12.98.19,2.05.19,3.2ZM12,1.6c.86,0,2.24,2.05,2.95,5.6h-5.89c.71-3.55,2.08-5.6,2.95-5.6ZM9.25,1.98c-.8,1.27-1.44,3.08-1.83,5.22H2.78c1.32-2.53,3.66-4.45,6.47-5.22ZM1.6,12c0-1.12.18-2.19.51-3.2h5.08c-.12,1.02-.19,2.09-.19,3.2s.07,2.18.19,3.2H2.11c-.33-1.01-.51-2.08-.51-3.2ZM2.78,16.8h4.64c.39,2.14,1.03,3.95,1.83,5.22-2.81-.77-5.14-2.69-6.47-5.22ZM12,22.4c-.86,0-2.24-2.05-2.95-5.6h5.89c-.71,3.55-2.08,5.6-2.95,5.6ZM14.75,22.02c.8-1.27,1.44-3.08,1.83-5.22h4.64c-1.32,2.53-3.66,4.45-6.47,5.22ZM16.81,15.2c.12-1.02.19-2.09.19-3.2s-.07-2.18-.19-3.2h5.08c.33,1.01.51,2.08.51,3.2s-.18,2.19-.51,3.2h-5.08Z"/></svg>
       </div>
       <div class="cap-title">Multi: The Full Stack</div>
       <p class="cap-desc">Multi-property, multi-entity, multi-country, multi-currency. Local tax formats, e-invoicing mandates — built into one platform.</p>
@@ -844,13 +962,98 @@
   <div class="footer-legal">© 2026 Bring IT — bringitps.com</div>
 </footer>
 
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" type="button" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="Hotel 360° product screenshot, enlarged">
+</div>
+
 <script>
   function toggleFaq(btn) {
-    const item = btn.closest('.faq-item');
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
+    btn.closest('.faq-item').classList.toggle('open');
   }
+  function toggleCap(card) {
+    card.classList.toggle('open');
+  }
+
+  /* How It Works — synced step ↔ screenshot stepper with progress dots + lightbox */
+  (function () {
+    const steps = Array.from(document.querySelectorAll('.how-step'));
+    const imgs  = Array.from(document.querySelectorAll('.shot-stage img'));
+    const dots  = Array.from(document.querySelectorAll('.shot-dot'));
+    const fills = dots.map(d => d.querySelector('.dot-fill'));
+    const capText  = document.querySelector('.shot-caption-text');
+    const stage    = document.querySelector('.shot-stage');
+    const layout   = document.querySelector('.how-layout');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    if (!steps.length || !imgs.length) return;
+
+    const captions = [
+      "Every property's transactions, captured and aggregated in one view.",
+      "USALI v12 rules applied automatically — Butterfly P&L with actuals, budget and variance.",
+      "Continuous financial truth in the general ledger — revenue, GOP margin, EBITDA, RevPAR.",
+      "Your team shifts to advisory work, with Marcus AI handling the repetitive tasks."
+    ];
+    const AUTO = 5500;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let current = 0, hovering = false;
+
+    function updatePlay() {
+      const f = fills[current];
+      if (f) f.style.animationPlayState = (hovering || lightbox.classList.contains('open')) ? 'paused' : 'running';
+    }
+    function runFill(i) {
+      fills.forEach((f, idx) => {
+        f.style.animation = 'none';
+        f.style.transform = (reduce && idx === i) ? 'scaleX(1)' : 'scaleX(0)';
+      });
+      if (reduce) return;
+      const f = fills[i];
+      void f.offsetWidth;                       // reflow to restart the animation
+      f.style.transform = '';
+      f.style.animation = 'dotfill ' + AUTO + 'ms linear forwards';
+      updatePlay();
+    }
+    function setActive(i) {
+      current = i;
+      steps.forEach((s, idx) => s.classList.toggle('active', idx === i));
+      imgs.forEach((im, idx) => im.classList.toggle('active', idx === i));
+      dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+      if (capText) capText.textContent = captions[i] || '';
+      runFill(i);
+    }
+    function next() { setActive((current + 1) % steps.length); }
+
+    // the active dot's fill animation finishing advances to the next step
+    fills.forEach((f, i) => f.addEventListener('animationend', () => { if (i === current) next(); }));
+
+    steps.forEach((s, i) => s.addEventListener('click', () => setActive(i)));
+    dots.forEach((d, i)  => d.addEventListener('click', (e) => { e.stopPropagation(); setActive(i); }));
+
+    // pause while hovering the section
+    layout.addEventListener('mouseenter', () => { hovering = true;  updatePlay(); });
+    layout.addEventListener('mouseleave', () => { hovering = false; updatePlay(); });
+
+    // lightbox — click the screenshot to view it full size
+    function openLightbox() {
+      lightboxImg.src = imgs[current].getAttribute('src');
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      updatePlay();
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      updatePlay();
+    }
+    stage.addEventListener('click', openLightbox);
+    lightbox.addEventListener('click', closeLightbox);
+    document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox(); });
+
+    setActive(0);
+  })();
 </script>
 </body>
 </html>
